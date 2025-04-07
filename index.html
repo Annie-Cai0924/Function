@@ -63,68 +63,32 @@
                     <div class="modal-title">Record Today's Emotion</div>
                     <button class="close-modal" id="close-modal">×</button>
                 </div>
-                
-    <!-- Side Panel: Zodiac Advice -->
-    <div class="side-panel">
-      <div class="panel-card">
-        <div class="panel-header">
-          <div class="panel-title">🌟 Today's Zodiac Advice</div>
-        </div>
-        <div class="panel-content">
-          <div id="zodiac-info">
-            <div class="zodiac-header">
-              <strong id="zodiac-title">Please select a zodiac sign</strong>
-              <div><small id="zodiac-period">-</small></div>
-              <div><small>Element: <span id="zodiac-element">-</span></small></div>
+
+   <div class="modal-body">
+                    <form id="emotion-form">
+                        <div class="form-group">
+                            <label>Select Emotion</label>
+                            <div id="emotion-grid" class="emotion-grid">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="intensity">Emotion Intensity</label>
+                            <div class="range-container">
+                                <span class="range-value" id="intensity-value">5</span>
+                                <input type="range" id="intensity" name="intensity" min="1" max="10" value="5"
+                                    class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="date">Date</label>
+                            <input type="date" id="date" name="date" class="form-control">
+                        </div>
+                        <button type="submit" class="submit-btn">Record Emotion</button>
+                    </form>
+                </div>
             </div>
-            <p id="zodiac-message" class="zodiac-message">
-              Select your zodiac sign to receive emotional guidance for today.
-            </p>
-          </div>
         </div>
-      </div>
     </div>
-
-    <!-- Emotion Modal -->
-    <div id="emotion-modal" class="modal-overlay">
-      <div class="modal">
-        <div class="modal-header">
-          <div class="modal-title">Record Today's Emotion</div>
-          <button class="close-modal" id="close-modal">×</button>
-        </div>
-        <div class="modal-body">
-          <form id="emotion-form">
-            <div class="form-group">
-              <label for="emotion">Select Emotion</label>
-              <select id="emotion">
-                <option value="Happy">Happy</option>
-                <option value="Calm">Calm</option>
-                <option value="Anxious">Anxious</option>
-                <option value="Angry">Angry</option>
-                <option value="Sad">Sad</option>
-                <option value="Excited">Excited</option>
-                <option value="Tired">Tired</option>
-                <option value="Content">Content</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="intensity">Emotion Intensity</label>
-              <input type="range" id="intensity" min="1" max="10" value="5" />
-              <div id="intensity-value" class="range-value">5</div>
-            </div>
-
-            <div class="form-group">
-              <label for="note">Note (optional)</label>
-              <input type="text" id="note" placeholder="Add some notes..." />
-            </div>
-
-            <button type="submit" class="submit-btn">Record Emotion</button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <script src="assets/main.js"></script>
 </body>
