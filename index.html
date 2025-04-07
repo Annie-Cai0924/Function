@@ -43,13 +43,27 @@
             </div>
         </div>
     </div>
-    
-    <!-- Emotion Records -->
-    <div class="card">
-      <h2>Emotion Records</h2>
-      <div id="emotion-list" class="emotion-list"></div>
-    </div>
 
+    <div class="panel-card">
+      <div class="panel-header">
+          <div class="panel-title"><i class="fas fa-clock-rotate-left"></i> Emotion History</div>
+      </div>
+      <div class="panel-content">
+          <div id="history-panel" class="history-panel">
+              <div class="history-empty">No emotion records</div>
+          </div>
+      </div>
+  </div>
+</div>
+
+    <!-- Emotion Records -->
+  <div id="emotion-modal" class="modal-overlay">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title">Record Today's Emotion</div>
+                    <button class="close-modal" id="close-modal">×</button>
+                </div>
+                
     <!-- Side Panel: Zodiac Advice -->
     <div class="side-panel">
       <div class="panel-card">
