@@ -252,3 +252,98 @@ recordBtn.addEventListener("click", () => {
 closeModal.addEventListener("click", () => {
   modal.classList.remove("active");
 });
+
+// 1. Zodiac Data
+const zodiacData = {
+    Aries: {
+      period: "March 21 - April 19",
+      element: "Fire",
+      advice: "Channel your bold energy into something creative today. Avoid impulsive decisions in emotional matters."
+    },
+    Taurus: {
+      period: "April 20 - May 20",
+      element: "Earth",
+      advice: "Ground yourself with familiar comforts. It's a good day to reflect before reacting emotionally."
+    },
+    Gemini: {
+      period: "May 21 - June 20",
+      element: "Air",
+      advice: "Your emotions may shift quickly today — try journaling to track your inner thoughts."
+    },
+    Cancer: {
+      period: "June 21 - July 22",
+      element: "Water",
+      advice: "Honor your sensitivity. Spend time with people who emotionally support you."
+    },
+    Leo: {
+      period: "July 23 - August 22",
+      element: "Fire",
+      advice: "Let your warm energy shine! Express your feelings through a bold gesture."
+    },
+    Virgo: {
+      period: "August 23 - September 22",
+      element: "Earth",
+      advice: "You may feel overly critical today. Breathe and let go of emotional perfectionism."
+    },
+    Libra: {
+      period: "September 23 - October 22",
+      element: "Air",
+      advice: "Seek balance in your emotional interactions. A little self-care goes a long way."
+    },
+    Scorpio: {
+      period: "October 23 - November 21",
+      element: "Water",
+      advice: "Embrace your emotional intensity. Transformation often comes from deep feelings."
+    },
+    Sagittarius: {
+      period: "November 22 - December 21",
+      element: "Fire",
+      advice: "Your optimism is powerful — share it, but don’t ignore what’s under the surface."
+    },
+    Capricorn: {
+      period: "December 22 - January 19",
+      element: "Earth",
+      advice: "Stay emotionally resilient. Structure and routine can help ease your worries today."
+    },
+    Aquarius: {
+      period: "January 20 - February 18",
+      element: "Air",
+      advice: "Think outside the box emotionally. Surprise yourself with a new way to process feelings."
+    },
+    Pisces: {
+      period: "February 19 - March 20",
+      element: "Water",
+      advice: "Let your intuition guide your emotions. Today is a good day for creative expression."
+    }
+  };
+  
+  // 2. Populate zodiac <select>
+  const zodiacSelect = document.getElementById("zodiac-sign");
+  Object.keys(zodiacData).forEach(sign => {
+    const option = document.createElement("option");
+    option.value = sign;
+    option.textContent = sign;
+    zodiacSelect.appendChild(option);
+  });
+  
+  // 3. Update advice when sign is selected
+  zodiacSelect.addEventListener("change", function () {
+    const selected = this.value;
+    const title = document.getElementById("zodiac-title");
+    const period = document.getElementById("zodiac-period");
+    const element = document.getElementById("zodiac-element");
+    const message = document.getElementById("zodiac-message");
+  
+    if (selected && zodiacData[selected]) {
+      const data = zodiacData[selected];
+      title.textContent = selected;
+      period.textContent = data.period;
+      element.textContent = data.element;
+      message.textContent = data.advice;
+    } else {
+      title.textContent = "Please select a zodiac sign";
+      period.textContent = "-";
+      element.textContent = "-";
+      message.textContent = "Select your zodiac sign to receive emotional guidance for today.";
+    }
+  });
