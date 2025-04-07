@@ -8,6 +8,7 @@
 </head>
 <body>
   <div class="app-wrapper">
+    <!-- Top Bar -->
     <div class="top-bar">
       <div class="logo">
         <h1>Star Sky Emotion Tracker</h1>
@@ -20,126 +21,59 @@
       </div>
     </div>
 
-    <div id="emotion-modal" class="modal-overlay">
-        <div class="modal">
-          <div class="modal-header">
-            <div class="modal-title">Record Today's Emotion</div>
-            <button class="close-modal" id="close-modal">×</button>
-          </div>
-          <div class="modal-body">
-            <form id="emotion-form">
-              <!-- Emotion Select -->
-              <!-- Intensity Slider -->
-              <!-- Note (optional) -->
-              <button type="submit" class="submit-btn">Record Emotion</button>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="intensity">Intensity (1-10)</label>
-        <input type="range" id="intensity" min="1" max="10" value="5" />
-        <div id="intensity-value" class="range-value">5</div>
-      </div>
-
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>Emotion Star Chart</title>
-        <link rel="stylesheet" href="styles.css" />
-      </head>
-      <body>
-        <div class="app-wrapper">
-          <!-- Top Bar -->
-          <div class="top-bar">
-            <div class="logo">
-              <h1>Star Sky Emotion Tracker</h1>
-            </div>
-            <div class="top-actions">
-              <select id="zodiac-sign">
-                <option value="">Select Zodiac Sign</option>
-              </select>
-              <button id="record-emotion-btn">Record Emotion</button>
-            </div>
-          </div>
-      
-          <!-- Star Chart -->
-          <div class="card">
-            <h2>Your Emotion Star Chart</h2>
-            <div id="star-chart" class="star-chart"></div>
-          </div>
-      
-          <!-- Emotion Records -->
-          <div class="card">
-            <h2>Emotion Records</h2>
-            <div id="emotion-list" class="emotion-list"></div>
-          </div>
-      
-          <!-- Side Panel (still empty for now) -->
-          <div class="side-panel"></div>
-      
-          <!-- Emotion Modal -->
-          <div id="emotion-modal" class="modal-overlay">
-            <div class="modal">
-              <div class="modal-header">
-                <div class="modal-title">Record Today's Emotion</div>
-                <button class="close-modal" id="close-modal">×</button>
-              </div>
-              <div class="modal-body">
-                <form id="emotion-form">
-                  <div class="form-group">
-                    <label for="emotion">Select Emotion</label>
-                    <select id="emotion">
-                      <option value="Happy">Happy</option>
-                      <option value="Calm">Calm</option>
-                      <option value="Anxious">Anxious</option>
-                      <option value="Angry">Angry</option>
-                      <option value="Sad">Sad</option>
-                      <option value="Excited">Excited</option>
-                      <option value="Tired">Tired</option>
-                      <option value="Content">Content</option>
-                    </select>
-                  </div>
-      
-                  <div class="form-group">
-                    <label for="intensity">Emotion Intensity</label>
-                    <input type="range" id="intensity" min="1" max="10" value="5" />
-                    <div id="intensity-value" class="range-value">5</div>
-                  </div>
-      
-                  <div class="form-group">
-                    <label for="note">Note (optional)</label>
-                    <input type="text" id="note" placeholder="Add some notes..." />
-                  </div>
-      
-                  <button type="submit" class="submit-btn">Record Emotion</button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      
-        <script src="script.js"></script>
-      </body>
-      </html>
-
-      <button id="save-btn">Record Emotion</button>
-    </div>
-
+    <!-- Star Chart -->
     <div class="card">
       <h2>Your Emotion Star Chart</h2>
       <div id="star-chart" class="star-chart"></div>
     </div>
 
+    <!-- Emotion Records -->
     <div class="card">
       <h2>Emotion Records</h2>
       <div id="emotion-list" class="emotion-list"></div>
     </div>
 
-    <div class="side-panel">
+    <!-- Side Panel (empty for now) -->
+    <div class="side-panel"></div>
+
+    <!-- Emotion Modal -->
+    <div id="emotion-modal" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <div class="modal-title">Record Today's Emotion</div>
+          <button class="close-modal" id="close-modal">×</button>
+        </div>
+        <div class="modal-body">
+          <form id="emotion-form">
+            <div class="form-group">
+              <label for="emotion">Select Emotion</label>
+              <select id="emotion">
+                <option value="Happy">Happy</option>
+                <option value="Calm">Calm</option>
+                <option value="Anxious">Anxious</option>
+                <option value="Angry">Angry</option>
+                <option value="Sad">Sad</option>
+                <option value="Excited">Excited</option>
+                <option value="Tired">Tired</option>
+                <option value="Content">Content</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="intensity">Emotion Intensity</label>
+              <input type="range" id="intensity" min="1" max="10" value="5" />
+              <div id="intensity-value" class="range-value">5</div>
+            </div>
+
+            <div class="form-group">
+              <label for="note">Note (optional)</label>
+              <input type="text" id="note" placeholder="Add some notes..." />
+            </div>
+
+            <button type="submit" class="submit-btn">Record Emotion</button>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
 
