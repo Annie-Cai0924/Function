@@ -357,6 +357,98 @@ document.addEventListener('DOMContentLoaded', function() {
         });
       }
       
+      function createBackgroundStars() {
+        backgroundStars = [];
+        const starCount = Math.floor(starCanvas.width * starCanvas.height / 1000);
+        
+        for (let i = 0; i < starCount; i++) {
+          backgroundStars.push({
+            x: Math.random() * starCanvas.width,
+            y: Math.random() * starCanvas.height,
+            size: 0.1 + Math.random() * 1,
+            alpha: 0.1 + Math.random() * 0.6,
+            pulse: 0.5 + Math.random() * 0.5,
+            phase: Math.random() * Math.PI * 2
+          });
+        }
+      }
+      
+      function animate() {
+        ctx.clearRect(0, 0, starCanvas.width, starCanvas.height);
+        
+        drawBackground();
+        
+        drawBackgroundStars();
+        
+        if (emotionHistory.length === 0) {
+          ctx.font = '18px Inter, sans-serif';
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+          ctx.textAlign = 'center';
+          ctx.fillText('Record your first emotion to create your star map', starCanvas.width / 2, starCanvas.height / 2);
+          animationFrame = requestAnimationFrame(animate);
+          return;
+        }
+        
+        drawConstellationLines();
+        
+        stars.forEach(star => drawStar(star));
+        
+        if (Math.random() < 0.01) {
+          createShootingStar();
+        }
+        
+        updateShootingStars();
+        
+        animationFrame = requestAnimationFrame(animate);
+      }
+      
+      function drawBackground() {
+        const gradient = ctx.createRadialGradient(
+          starCanvas.width / 2, starCanvas.height / 2, 0,
+          starCanvas.width / 2, starCanvas.height / 2, starCanvas.width * 0.7
+        );
+        
+        gradient.addColorStop(0, 'rgba(25, 25, 50, 1)');
+        gradient.addColorStop(0.5, 'rgba(15, 15, 35, 1)');
+        gradient.addColorStop(1, 'rgba(5, 5, 20, 1)');
+        
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, starCanvas.width, starCanvas.height);
+        
+        for (let i = 0; i < 5; i++) {
+          const cloudGradient = ctx.createRadialGradient(
+            Math.random() * starCanvas.width,
+            Math.random() * starCanvas.height,
+            0,
+            Math.random() * starCanvas.width,
+            Math.random() * starCanvas.height,
+            starCanvas.width * 0.2
+          );
+          
+          const hue = Math.random() * 60;
+          const saturation = 30 + Math.random() * 30;
+          const lightness = 5 + Math.random() * 10;
+          
+          cloudGradient.addColorStop(0, `hsla(${hue}, ${saturation}%, ${lightness}%, 0.1)`);
+          cloudGradient.addColorStop(1, 'transparent');
+          
+          ctx.fillStyle = cloudGradient;
+          ctx.fillRect(0, 0, starCanvas.width, starCanvas.height);
+        }
+      }
+      
+      function drawBackgroundStars() {
+        backgroundStars.forEach(star => {
+          star.phase += 0.01;
+          
+          const alpha = star.alpha * (0.5 + Math.sin(star.phase) * 0.5 * star.pulse);
+          
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+          ctx.fill();
+        });
+      }
       
       function drawConstellationLines() {
         constellationLines.forEach(line => {
@@ -434,18 +526,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         ctx.restore();
       }
-
-
-
-
-
-
-
-
-
-
-
-
+      
+      let shootingStars = [];
+  
       function hexToRgb(hex) {
         hex = hex.replace('#', '');
         
