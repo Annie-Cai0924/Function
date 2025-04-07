@@ -1,349 +1,776 @@
-// Get DOM elements
-const emotionSelect = document.getElementById('emotion');
-const intensitySlider = document.getElementById('intensity');
-const intensityValue = document.getElementById('intensity-value');
-const noteInput = document.getElementById('note');
-const saveBtn = document.getElementById('save-btn');
-const starChart = document.getElementById('star-chart');
-const emotionList = document.getElementById('emotion-list');
-
-// Display intensity value
-intensitySlider.addEventListener('input', function() {
-    intensityValue.textContent = this.value;
-});
-
-// Emotion color mapping
-const emotionColors = {
-    'Happy': '#FFD700', // Gold
-    'Calm': '#48CAFF',  // Sky blue
-    'Anxious': '#8A2BE2', // Purple
-    'Angry': '#FF4500', // Orange-red
-    'Sad': '#4169E1',   // Royal blue
-    'Excited': '#FF1493', // Deep pink
-    'Tired': '#808080', // Gray
-    'Content': '#32CD32' // Lime green
-};
-
-// Get emotion data from local storage, initialize as empty array if none exists
-let emotions = JSON.parse(localStorage.getItem('emotions')) || [];
-
-// Save emotion data
-saveBtn.addEventListener('click', function() {
-    const emotion = emotionSelect.value;
-    const intensity = parseInt(intensitySlider.value);
-    const note = noteInput.value;
-    const timestamp = new Date().toISOString();
+document.addEventListener('DOMContentLoaded', function() {
+    let userZodiac = localStorage.getItem('userZodiac') || '';
+    const dailyAdviceData = {};
     
-    // Create new emotion data object
-    const newEmotion = {
-        id: Date.now(), // Use timestamp as unique ID
-        emotion,
-        intensity,
-        note,
-        timestamp
-    };
+    const emotions = [
+      { id: 'happy', name: 'Happy', color: '#FFD700', icon: '😊' },
+      { id: 'excited', name: 'Excited', color: '#FF4500', icon: '🤩' },
+      { id: 'calm', name: 'Calm', color: '#1E90FF', icon: '😌' },
+      { id: 'sad', name: 'Sad', color: '#6A5ACD', icon: '😢' },
+      { id: 'anxious', name: 'Anxious', color: '#9932CC', icon: '😰' },
+      { id: 'angry', name: 'Angry', color: '#DC143C', icon: '😡' },
+      { id: 'tired', name: 'Tired', color: '#708090', icon: '😫' },
+      { id: 'grateful', name: 'Grateful', color: '#32CD32', icon: '🙏' }
+    ];
+  
+    const zodiacSigns = [
+      { id: 'aries', name: 'Aries', period: 'March 21 - April 19', element: 'Fire' },
+      { id: 'taurus', name: 'Taurus', period: 'April 20 - May 20', element: 'Earth' },
+      { id: 'gemini', name: 'Gemini', period: 'May 21 - June 20', element: 'Air' },
+      { id: 'cancer', name: 'Cancer', period: 'June 21 - July 22', element: 'Water' },
+      { id: 'leo', name: 'Leo', period: 'July 23 - August 22', element: 'Fire' },
+      { id: 'virgo', name: 'Virgo', period: 'August 23 - September 22', element: 'Earth' },
+      { id: 'libra', name: 'Libra', period: 'September 23 - October 22', element: 'Air' },
+      { id: 'scorpio', name: 'Scorpio', period: 'October 23 - November 21', element: 'Water' },
+      { id: 'sagittarius', name: 'Sagittarius', period: 'November 22 - December 21', element: 'Fire' },
+      { id: 'capricorn', name: 'Capricorn', period: 'December 22 - January 19', element: 'Earth' },
+      { id: 'aquarius', name: 'Aquarius', period: 'January 20 - February 18', element: 'Air' },
+      { id: 'pisces', name: 'Pisces', period: 'February 19 - March 20', element: 'Water' }
+    ];
+  
+    const emotionGrid = document.getElementById('emotion-grid');
+    const intensityInput = document.getElementById('intensity');
+    const intensityValue = document.getElementById('intensity-value');
+    const dateInput = document.getElementById('date');
+    const emotionForm = document.getElementById('emotion-form');
+    const historyPanel = document.getElementById('history-panel');
+    const starCanvas = document.getElementById('star-canvas');
+    const zodiacSelect = document.getElementById('zodiac-sign');
+    const zodiacInfo = document.getElementById('zodiac-info');
+    const zodiacTitle = document.getElementById('zodiac-title');
+    const zodiacPeriod = document.getElementById('zodiac-period');
+    const zodiacElement = document.getElementById('zodiac-element');
+    const zodiacMessage = document.getElementById('zodiac-message');
+    const recordEmotionBtn = document.getElementById('record-emotion-btn');
+    const emotionModal = document.getElementById('emotion-modal');
+    const closeModal = document.getElementById('close-modal');
+    const initialZodiacModal = document.getElementById('initial-zodiac-modal');
+    const initialZodiacSelect = document.getElementById('initial-zodiac-select');
+    const saveZodiacBtn = document.getElementById('save-zodiac-btn');
+  
+    const today = new Date();
+    const formattedDate = today.toISOString().split('T')[0];
+    dateInput.value = formattedDate;
     
-    // Add new emotion to array
-    emotions.push(newEmotion);
-    
-    // Save to local storage
-    localStorage.setItem('emotions', JSON.stringify(emotions));
-    
-    // Re-render emotion list and star chart
-    renderEmotionList();
-    renderStarChart();
-    
-    // Reset form
-    noteInput.value = '';
-    intensitySlider.value = 5;
-    intensityValue.textContent = '5';
-});
-
-// Initialize page by rendering emotion list and star chart
-renderEmotionList();
-renderStarChart();
-
-// Render emotion list
-function renderEmotionList() {
-    emotionList.innerHTML = '';
-    
-    // If no emotion data, show message
-    if (emotions.length === 0) {
-        emotionList.innerHTML = '<p style="text-align: center; color: #888;">No emotion records yet</p>';
-        return;
-    }
-    
-    // Sort by time in descending order, showing most recent emotions first
-    emotions.slice().reverse().forEach(item => {
-        const date = new Date(item.timestamp);
-        const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
-        
+    dateInput.max = formattedDate;
+  
+    intensityInput.addEventListener('input', function() {
+      intensityValue.textContent = this.value;
+    });
+  
+    function populateEmotionGrid() {
+      emotionGrid.innerHTML = '';
+      emotions.forEach(emotion => {
         const emotionItem = document.createElement('div');
         emotionItem.className = 'emotion-item';
+        emotionItem.dataset.id = emotion.id;
         emotionItem.innerHTML = `
-            <div>
-                <strong>${item.emotion}</strong> (Intensity: ${item.intensity}) 
-                <span style="color: #888;">${formattedDate}</span>
-                ${item.note ? `<p>${item.note}</p>` : ''}
-            </div>
-            <button class="delete-btn" data-id="${item.id}">Delete</button>
+          <div class="emotion-icon" style="background-color: ${emotion.color}">
+            ${emotion.icon}
+          </div>
+          <div class="emotion-name">${emotion.name}</div>
         `;
-        emotionList.appendChild(emotionItem);
-    });
-    
-    // Add event listeners for all delete buttons
-    document.querySelectorAll('.delete-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const id = parseInt(this.getAttribute('data-id'));
-            deleteEmotion(id);
+        emotionGrid.appendChild(emotionItem);
+  
+        emotionItem.addEventListener('click', function() {
+          document.querySelectorAll('.emotion-item').forEach(item => {
+            item.classList.remove('selected');
+          });
+          this.classList.add('selected');
         });
-    });
-}
-
-// Delete emotion record
-function deleteEmotion(id) {
-    emotions = emotions.filter(item => item.id !== id);
-    localStorage.setItem('emotions', JSON.stringify(emotions));
-    renderEmotionList();
-    renderStarChart();
-}
-
-// Render star chart
-function renderStarChart() {
-    // Clear star chart
-    starChart.innerHTML = '';
-    
-    // If no emotion data, show message
-    if (emotions.length === 0) {
-        const noDataText = document.createElement('p');
-        noDataText.style.color = 'white';
-        noDataText.style.textAlign = 'center';
-        noDataText.style.padding = '120px 0';
-        noDataText.textContent = 'Record your emotions to create a star chart';
-        starChart.appendChild(noDataText);
+      });
+    }
+  
+    function populateZodiacSelect() {
+      zodiacSigns.forEach(sign => {
+        const option = document.createElement('option');
+        option.value = sign.id;
+        option.textContent = sign.name;
+        zodiacSelect.appendChild(option);
+      });
+    }
+  
+    function showZodiacInfo(zodiacId) {
+      const sign = zodiacSigns.find(sign => sign.id === zodiacId);
+      if (!sign) return;
+  
+      zodiacTitle.textContent = sign.name;
+      zodiacPeriod.textContent = sign.period;
+      zodiacElement.textContent = sign.element;
+      
+      getZodiacMessage(sign.id).then(message => {
+        zodiacMessage.textContent = message;
+        zodiacInfo.style.display = 'block';
+      });
+    }
+  
+    async function getZodiacMessage(zodiacId) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      const messages = {
+        'aries': 'Today your enthusiasm is like fire, suitable for starting new projects. Remember to pay attention to emotional fluctuations and maintain balance.',
+        'taurus': 'Stability is your advantage, but beware of stubbornness. Today is suitable for enjoying simple pleasures.',
+        'gemini': 'Communication is your strength, and today there may be unexpected good news. Keep an open mind.',
+        'cancer': 'An emotionally rich day, listen to your inner voice, recording your feelings will help.',
+        'leo': 'Your creativity is especially strong today, express yourself, but also take care of others\' feelings.',
+        'virgo': 'Details determine success or failure, today is suitable for organizing thoughts and solving accumulated problems.',
+        'libra': 'Balance and harmony are important to you, today you may face choices, trust your intuition.',
+        'scorpio': 'Today your insight is particularly keen, suitable for deep thinking and emotional exploration.',
+        'sagittarius': 'The spirit of adventure guides you forward, today may bring new discoveries, stay optimistic.',
+        'capricorn': 'Steady progress is your style, today\'s efforts will be rewarded in the future.',
+        'aquarius': 'Innovative thinking is particularly active today, try to view emotional changes from a new perspective.',
+        'pisces': 'Intuition is particularly accurate today, listen to your inner voice, artistic activities help relieve stress.'
+      };
+      
+      return messages[zodiacId] || 'Loading zodiac information...';
+    }
+  
+    function saveEmotions(emotionsData) {
+      localStorage.setItem('emotions', JSON.stringify(emotionsData));
+    }
+  
+    function loadEmotionHistory() {
+      const saved = localStorage.getItem('emotions');
+      return saved ? JSON.parse(saved) : [];
+    }
+  
+    function renderEmotionHistory() {
+      const emotionHistory = loadEmotionHistory();
+      
+      if (emotionHistory.length === 0) {
+        historyPanel.innerHTML = '<div class="history-empty">No emotion records</div>';
         return;
+      }
+      
+      const groupedEmotions = groupByDate(emotionHistory);
+      
+      historyPanel.innerHTML = '';
+      
+      Object.keys(groupedEmotions).forEach(date => {
+        const dateHeader = document.createElement('div');
+        dateHeader.className = 'date-header';
+        dateHeader.innerHTML = `<i class="fas fa-calendar-day"></i> ${formatDateHeader(date)}`;
+        historyPanel.appendChild(dateHeader);
+        
+        groupedEmotions[date].forEach(emotion => {
+          const emotionData = emotions.find(e => e.id === emotion.emotion);
+          if (!emotionData) return;
+          
+          const historyItem = document.createElement('div');
+          historyItem.className = 'history-item';
+          historyItem.dataset.id = emotion.id;
+          historyItem.innerHTML = `
+            <div class="history-item-content">
+              <div class="emotion-color" style="background-color: ${emotionData.color}">${emotionData.icon}</div>
+              <div class="emotion-details">
+                <div class="emotion-name">${emotionData.name}</div>
+                <div class="emotion-time">${formatTime(emotion.timestamp)}</div>
+              </div>
+              <div class="intensity-value">${emotion.intensity}</div>
+            </div>
+            <button class="delete-btn" data-id="${emotion.id}" title="Delete this record">
+              <i class="fas fa-times"></i>
+            </button>
+          `;
+          
+          historyPanel.appendChild(historyItem);
+        });
+      });
+      
+      document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const id = this.dataset.id;
+          if (confirm('Are you sure you want to delete this emotion record?')) {
+            deleteEmotion(id);
+          }
+        });
+      });
     }
-    
-    // Get star chart container dimensions
-    const chartWidth = starChart.clientWidth;
-    const chartHeight = 400;
-    starChart.style.height = `${chartHeight}px`;
-    
-    // Create SVG element
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('width', '100%');
-    svg.setAttribute('height', '100%');
-    svg.setAttribute('viewBox', `0 0 ${chartWidth} ${chartHeight}`);
-    starChart.appendChild(svg);
-    
-    // Add random small stars as background
-    for (let i = 0; i < 100; i++) {
-        const x = Math.random() * chartWidth;
-        const y = Math.random() * chartHeight;
-        const size = Math.random() * 2;
-        
-        const star = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        star.setAttribute('cx', x);
-        star.setAttribute('cy', y);
-        star.setAttribute('r', size);
-        star.setAttribute('fill', '#FFFFFF');
-        star.setAttribute('opacity', Math.random() * 0.5 + 0.3);
-        svg.appendChild(star);
+  
+    function groupByDate(emotions) {
+      return emotions.reduce((groups, emotion) => {
+        const date = formatDate(new Date(emotion.timestamp));
+        if (!groups[date]) {
+          groups[date] = [];
+        }
+        groups[date].push(emotion);
+        return groups;
+      }, {});
     }
-    
-    // Create a star for each emotion record
-    emotions.forEach((item, index) => {
-        // Calculate star position and size based on emotion data
-        const angle = (index / emotions.length) * Math.PI * 2;
-        const distance = 120 + item.intensity * 10; // Higher intensity = further from center
+  
+    function formatDateHeader(dateStr) {
+      const date = new Date(dateStr);
+      const today = new Date();
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      
+      if (dateStr === formatDate(today)) {
+        return 'Today';
+      } else if (dateStr === formatDate(yesterday)) {
+        return 'Yesterday';
+      } else {
+        return dateStr;
+      }
+    }
+  
+    function formatTime(timestamp) {
+      const date = new Date(timestamp);
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      return `${hours}:${minutes}`;
+    }
+  
+    function formatDate(date) {
+      return date.toISOString().split('T')[0];
+    }
+  
+    function deleteEmotion(id) {
+      let emotions = loadEmotionHistory();
+      emotions = emotions.filter(e => e.id !== id);
+      saveEmotions(emotions);
+      renderEmotionHistory();
+      initializeStarMap();
+      showToast('Record deleted', 'info');
+    }
+  
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.className = `toast ${type}`;
+      
+      let icon = '';
+      switch(type) {
+        case 'success': icon = '<i class="fas fa-check-circle"></i> '; break;
+        case 'error': icon = '<i class="fas fa-exclamation-circle"></i> '; break;
+        case 'warning': icon = '<i class="fas fa-exclamation-triangle"></i> '; break;
+        case 'info': icon = '<i class="fas fa-info-circle"></i> '; break;
+      }
+      
+      toast.innerHTML = `${icon}${message}`;
+      toast.classList.add('visible');
+      
+      setTimeout(() => {
+        toast.classList.remove('visible');
+      }, 3000);
+    }
+  
+    function initializeStarMap() {
+      const emotionHistory = loadEmotionHistory();
+      const ctx = starCanvas.getContext('2d');
+      
+      let stars = [];
+      let constellationLines = [];
+      let backgroundStars = [];
+      let animationFrame;
+      
+      const resizeCanvas = () => {
+        const container = starCanvas.parentElement;
+        starCanvas.width = container.offsetWidth;
+        starCanvas.height = container.offsetHeight;
         
-        const centerX = chartWidth / 2;
-        const centerY = chartHeight / 2;
+        createStars();
+        createBackgroundStars();
+      };
+      
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();
+      
+      function createStars() {
+        stars = [];
         
-        const x = centerX + Math.cos(angle) * distance;
-        const y = centerY + Math.sin(angle) * distance;
+        if (emotionHistory.length === 0) return;
         
-        const size = 10 + item.intensity; // Higher intensity = larger star
-        const color = emotionColors[item.emotion] || '#FFFFFF';
+        emotionHistory.forEach((emotion, index) => {
+          const emotionData = emotions.find(e => e.id === emotion.emotion);
+          if (!emotionData) return;
+          
+          const seedX = parseInt(emotion.id) % 10000;
+          const seedY = parseInt(emotion.id) / 10000;
+          
+          const angleOffset = index * (Math.PI * 0.7);
+          const distanceFromCenter = 50 + (emotion.intensity * 20);
+          
+          const x = (starCanvas.width / 2) + Math.cos(seedX + angleOffset) * distanceFromCenter;
+          const y = (starCanvas.height / 2) + Math.sin(seedY + angleOffset) * distanceFromCenter;
+          
+          const size = 2 + (emotion.intensity / 2);
+          
+          stars.push({
+            x,
+            y,
+            size,
+            color: emotionData.color,
+            points: 5 + Math.floor(Math.random() * 2),
+            rotation: Math.random() * Math.PI * 2,
+            phase: Math.random() * Math.PI * 2,
+            emotionData: {
+              id: emotion.id,
+              name: emotionData.name,
+              intensity: emotion.intensity,
+              timestamp: emotion.timestamp
+            }
+          });
+        });
         
-        // Create star
-        const star = createStar(x, y, size, color, item.intensity / 10);
-        svg.appendChild(star);
+        createConstellationLines();
+      }
+      
+      function createConstellationLines() {
+        constellationLines = [];
         
-        // Add connecting line
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', centerX);
-        line.setAttribute('y1', centerY);
-        line.setAttribute('x2', x);
-        line.setAttribute('y2', y);
-        line.setAttribute('stroke', color);
-        line.setAttribute('stroke-width', '1');
-        line.setAttribute('stroke-opacity', '0.3');
-        svg.insertBefore(line, star);
+        if (stars.length < 2) return;
+        
+        stars.forEach((star, i) => {
+          const distances = [];
+          
+          for (let j = 0; j < stars.length; j++) {
+            if (i === j) continue;
+            
+            const otherStar = stars[j];
+            const dx = star.x - otherStar.x;
+            const dy = star.y - otherStar.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < starCanvas.width / 4) {
+              distances.push({ index: j, distance });
+            }
+          }
+          
+          distances.sort((a, b) => a.distance - b.distance);
+          
+          const connectCount = 1 + Math.floor(Math.random() * 2);
+          for (let k = 0; k < Math.min(connectCount, distances.length); k++) {
+            const j = distances[k].index;
+            
+            const lineExists = constellationLines.some(line => 
+              (line.from === i && line.to === j) || (line.from === j && line.to === i)
+            );
+            
+            if (!lineExists) {
+              constellationLines.push({
+                from: i,
+                to: j,
+                alpha: 0.1 + Math.random() * 0.2
+              });
+            }
+          }
+        });
+      }
+      
+      
+      function drawConstellationLines() {
+        constellationLines.forEach(line => {
+          const fromStar = stars[line.from];
+          const toStar = stars[line.to];
+          
+          const gradient = ctx.createLinearGradient(
+            fromStar.x, fromStar.y,
+            toStar.x, toStar.y
+          );
+          
+          gradient.addColorStop(0, adjustColorAlpha(fromStar.color, line.alpha));
+          gradient.addColorStop(1, adjustColorAlpha(toStar.color, line.alpha));
+          
+          ctx.beginPath();
+          ctx.moveTo(fromStar.x, fromStar.y);
+          ctx.lineTo(toStar.x, toStar.y);
+          ctx.strokeStyle = gradient;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        });
+      }
+      
+      function adjustColorAlpha(color, alpha) {
+        if (color.startsWith('#')) {
+          const r = parseInt(color.substr(1, 2), 16);
+          const g = parseInt(color.substr(3, 2), 16);
+          const b = parseInt(color.substr(5, 2), 16);
+          return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+        return color;
+      }
+      
+      function drawStar(star) {
+        ctx.save();
+        
+        star.phase += 0.01;
+        
+        ctx.translate(star.x, star.y);
+        
+        ctx.rotate(star.rotation + Math.sin(star.phase * 0.2) * 0.05);
+        
+        const scale = 1 + Math.sin(star.phase) * 0.1;
+        ctx.scale(scale, scale);
+        
+        const points = star.points;
+        const outerRadius = star.size;
+        const innerRadius = star.size * 0.4;
+        
+        const gradient = ctx.createRadialGradient(0, 0, innerRadius, 0, 0, outerRadius * 3);
+        gradient.addColorStop(0, adjustColorAlpha(star.color, 0.8));
+        gradient.addColorStop(0.5, adjustColorAlpha(star.color, 0.2));
+        gradient.addColorStop(1, 'transparent');
+        
+        ctx.beginPath();
+        ctx.arc(0, 0, outerRadius * 3, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+        
+        ctx.beginPath();
+        for (let i = 0; i < points * 2; i++) {
+          const radius = i % 2 === 0 ? outerRadius : innerRadius;
+          const angle = (i * Math.PI) / points;
+          
+          if (i === 0) {
+            ctx.moveTo(Math.cos(angle) * radius, Math.sin(angle) * radius);
+          } else {
+            ctx.lineTo(Math.cos(angle) * radius, Math.sin(angle) * radius);
+          }
+        }
+        
+        ctx.closePath();
+        ctx.fillStyle = star.color;
+        ctx.fill();
+        
+        ctx.restore();
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+      function hexToRgb(hex) {
+        hex = hex.replace('#', '');
+        
+        const r = parseInt(hex.substring(0, 2), 16);
+        const g = parseInt(hex.substring(2, 4), 16);
+        const b = parseInt(hex.substring(4, 6), 16);
+        
+        return `${r}, ${g}, ${b}`;
+      }
+      
+      let hoveredStar = null;
+      
+      starCanvas.addEventListener('mousemove', function(e) {
+        const rect = starCanvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        
+        hoveredStar = null;
+        starCanvas.style.cursor = 'default';
+        
+        for (let i = 0; i < stars.length; i++) {
+          const star = stars[i];
+          const dx = mouseX - star.x;
+          const dy = mouseY - star.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance <= star.size * 4) {
+            hoveredStar = star;
+            starCanvas.style.cursor = 'pointer';
+            break;
+          }
+        }
+      });
+      
+      starCanvas.addEventListener('click', function(e) {
+        if (hoveredStar) {
+          console.log('Clicked on star:', hoveredStar.emotionData);
+        }
+      });
+      
+      function drawStarInfo() {
+        if (!hoveredStar) return;
+        
+        const star = hoveredStar;
+        const data = star.emotionData;
+        
+        const date = new Date(data.timestamp);
+        const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+        const formattedTime = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+        
+        const text = `${data.name} (Intensity: ${data.intensity})
+  ${formattedDate} ${formattedTime}`;
+        
+        ctx.save();
+        
+        ctx.font = '14px Inter, sans-serif';
+        const textLines = text.split('\n');
+        const textWidth = Math.max(...textLines.map(line => ctx.measureText(line).width));
+        const boxWidth = textWidth + 20;
+        const boxHeight = textLines.length * 20 + 10;
+        
+        let boxX = star.x + 20;
+        let boxY = star.y - boxHeight - 10;
+        
+        if (boxX + boxWidth > starCanvas.width) {
+          boxX = star.x - boxWidth - 20;
+        }
+        
+        if (boxY < 0) {
+          boxY = star.y + 20;
+        }
+        
+        const bgGradient = ctx.createLinearGradient(boxX, boxY, boxX + boxWidth, boxY + boxHeight);
+        bgGradient.addColorStop(0, 'rgba(30, 30, 60, 0.9)');
+        bgGradient.addColorStop(1, 'rgba(20, 20, 40, 0.9)');
+        
+        ctx.fillStyle = bgGradient;
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+        
+        ctx.beginPath();
+        ctx.roundRect(boxX, boxY, boxWidth, boxHeight, 8);
+        ctx.fill();
+        
+        ctx.strokeStyle = star.color;
+        ctx.lineWidth = 2;
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+        ctx.stroke();
+        
+        ctx.fillStyle = '#fff';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'top';
+        
+        textLines.forEach((line, i) => {
+          ctx.fillText(line, boxX + 10, boxY + 10 + (i * 20));
+        });
+        
+        ctx.restore();
+      }
+      
+      function updateAnimation() {
+        animate();
+        
+        if (hoveredStar) {
+          drawStarInfo();
+        }
+        
+        animationFrame = requestAnimationFrame(updateAnimation);
+      }
+      
+      createStars();
+      createBackgroundStars();
+      updateAnimation();
+      
+      return function cleanup() {
+        if (animationFrame) {
+          cancelAnimationFrame(animationFrame);
+        }
+        window.removeEventListener('resize', resizeCanvas);
+      };
+    }
+  
+    emotionForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const selectedEmotion = document.querySelector('.emotion-item.selected');
+      if (!selectedEmotion) {
+        showToast('Please select an emotion', 'error');
+        return;
+      }
+      
+      const emotionId = selectedEmotion.dataset.id;
+      const intensity = parseInt(intensityInput.value);
+      const date = dateInput.value;
+      const timestamp = new Date(date).getTime();
+      
+      const emotion = {
+        id: Date.now().toString(),
+        emotion: emotionId,
+        intensity: intensity,
+        timestamp: timestamp
+      };
+      
+      const emotionHistory = loadEmotionHistory();
+      emotionHistory.push(emotion);
+      saveEmotions(emotionHistory);
+      
+      renderEmotionHistory();
+      initializeStarMap();
+      
+      showToast('Emotion record saved', 'success');
+      
+      document.querySelectorAll('.emotion-item').forEach(item => {
+        item.classList.remove('selected');
+      });
+      intensityInput.value = 5;
+      intensityValue.textContent = 5;
+      
+      emotionModal.classList.remove('active');
     });
-}
-
-// Create star shape
-function createStar(cx, cy, size, color, opacity) {
-    const points = 5; // 5-pointed star
-    const outerRadius = size;
-    const innerRadius = size / 2;
-    
-    let pointsString = '';
-    
-    for (let i = 0; i < points * 2; i++) {
-        const radius = i % 2 === 0 ? outerRadius : innerRadius;
-        const angle = (Math.PI / points) * i;
-        const x = cx + radius * Math.sin(angle);
-        const y = cy - radius * Math.cos(angle);
-        pointsString += `${x},${y} `;
+  
+    zodiacSelect.addEventListener('change', function() {
+      const selectedZodiac = this.value;
+      if (selectedZodiac) {
+        showZodiacInfo(selectedZodiac);
+      } else {
+        zodiacInfo.style.display = 'none';
+      }
+    });
+  
+    recordEmotionBtn.addEventListener('click', function() {
+      emotionModal.classList.add('active');
+    });
+  
+    closeModal.addEventListener('click', function() {
+      emotionModal.classList.remove('active');
+    });
+  
+    emotionModal.addEventListener('click', function(e) {
+      if (e.target === emotionModal) {
+        emotionModal.classList.remove('active');
+      }
+    });
+  
+    async function loadZodiacData() {
+      try {
+        const response = await fetch('assets/data.json');
+        if (!response.ok) throw new Error('Failed to load zodiac data');
+        const data = await response.json();
+        
+        populateZodiacSelects(data.zodiacSigns);
+        
+        data.zodiacSigns.forEach(sign => {
+          dailyAdviceData[sign.sign.toLowerCase()] = sign.advice;
+        });
+        
+        if (userZodiac) {
+          zodiacSelect.value = userZodiac;
+          updateZodiacInfo(userZodiac);
+          initialZodiacModal.classList.remove('active');
+        }
+      } catch (error) {
+        console.error('Error loading zodiac data:', error);
+        showToast('Unable to load zodiac data, please refresh the page and try again', 'error');
+      }
     }
     
-    const star = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-    star.setAttribute('points', pointsString.trim());
-    star.setAttribute('fill', color);
-    star.setAttribute('opacity', 0.5 + opacity * 0.5);
-    
-    // Add glow effect
-    const glow = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
-    const id = `glow-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-    glow.setAttribute('id', id);
-    
-    const feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
-    feGaussianBlur.setAttribute('stdDeviation', '2.5');
-    feGaussianBlur.setAttribute('result', 'coloredBlur');
-    glow.appendChild(feGaussianBlur);
-    
-    const feMerge = document.createElementNS('http://www.w3.org/2000/svg', 'feMerge');
-    
-    const feMergeNode1 = document.createElementNS('http://www.w3.org/2000/svg', 'feMergeNode');
-    feMergeNode1.setAttribute('in', 'coloredBlur');
-    feMerge.appendChild(feMergeNode1);
-    
-    const feMergeNode2 = document.createElementNS('http://www.w3.org/2000/svg', 'feMergeNode');
-    feMergeNode2.setAttribute('in', 'SourceGraphic');
-    feMerge.appendChild(feMergeNode2);
-    
-    glow.appendChild(feMerge);
-    
-    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-    defs.appendChild(glow);
-    
-    const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    group.appendChild(defs);
-    
-    star.setAttribute('filter', `url(#${id})`);
-    group.appendChild(star);
-    
-    return group;
-}
-
-// Re-render star chart when window size changes
-window.addEventListener('resize', renderStarChart);
-
-const recordBtn = document.getElementById("record-emotion-btn");
-const modal = document.getElementById("emotion-modal");
-const closeModal = document.getElementById("close-modal");
-
-recordBtn.addEventListener("click", () => {
-  modal.classList.add("active");
-});
-
-closeModal.addEventListener("click", () => {
-  modal.classList.remove("active");
-});
-
-// 1. Zodiac Data
-const zodiacData = {
-    Aries: {
-      period: "March 21 - April 19",
-      element: "Fire",
-      advice: "Channel your bold energy into something creative today. Avoid impulsive decisions in emotional matters."
-    },
-    Taurus: {
-      period: "April 20 - May 20",
-      element: "Earth",
-      advice: "Ground yourself with familiar comforts. It's a good day to reflect before reacting emotionally."
-    },
-    Gemini: {
-      period: "May 21 - June 20",
-      element: "Air",
-      advice: "Your emotions may shift quickly today — try journaling to track your inner thoughts."
-    },
-    Cancer: {
-      period: "June 21 - July 22",
-      element: "Water",
-      advice: "Honor your sensitivity. Spend time with people who emotionally support you."
-    },
-    Leo: {
-      period: "July 23 - August 22",
-      element: "Fire",
-      advice: "Let your warm energy shine! Express your feelings through a bold gesture."
-    },
-    Virgo: {
-      period: "August 23 - September 22",
-      element: "Earth",
-      advice: "You may feel overly critical today. Breathe and let go of emotional perfectionism."
-    },
-    Libra: {
-      period: "September 23 - October 22",
-      element: "Air",
-      advice: "Seek balance in your emotional interactions. A little self-care goes a long way."
-    },
-    Scorpio: {
-      period: "October 23 - November 21",
-      element: "Water",
-      advice: "Embrace your emotional intensity. Transformation often comes from deep feelings."
-    },
-    Sagittarius: {
-      period: "November 22 - December 21",
-      element: "Fire",
-      advice: "Your optimism is powerful — share it, but don’t ignore what’s under the surface."
-    },
-    Capricorn: {
-      period: "December 22 - January 19",
-      element: "Earth",
-      advice: "Stay emotionally resilient. Structure and routine can help ease your worries today."
-    },
-    Aquarius: {
-      period: "January 20 - February 18",
-      element: "Air",
-      advice: "Think outside the box emotionally. Surprise yourself with a new way to process feelings."
-    },
-    Pisces: {
-      period: "February 19 - March 20",
-      element: "Water",
-      advice: "Let your intuition guide your emotions. Today is a good day for creative expression."
+    function populateZodiacSelects(signs) {
+      signs.forEach(sign => {
+        const option1 = document.createElement('option');
+        option1.value = sign.sign.toLowerCase();
+        option1.textContent = sign.sign;
+        zodiacSelect.appendChild(option1);
+        
+        const option2 = document.createElement('option');
+        option2.value = sign.sign.toLowerCase();
+        option2.textContent = sign.sign;
+        initialZodiacSelect.appendChild(option2);
+      });
     }
-  };
-  
-  // 2. Populate zodiac <select>
-  const zodiacSelect = document.getElementById("zodiac-sign");
-  Object.keys(zodiacData).forEach(sign => {
-    const option = document.createElement("option");
-    option.value = sign;
-    option.textContent = sign;
-    zodiacSelect.appendChild(option);
-  });
-  
-  // 3. Update advice when sign is selected
-  zodiacSelect.addEventListener("change", function () {
-    const selected = this.value;
-    const title = document.getElementById("zodiac-title");
-    const period = document.getElementById("zodiac-period");
-    const element = document.getElementById("zodiac-element");
-    const message = document.getElementById("zodiac-message");
-  
-    if (selected && zodiacData[selected]) {
-      const data = zodiacData[selected];
-      title.textContent = selected;
-      period.textContent = data.period;
-      element.textContent = data.element;
-      message.textContent = data.advice;
-    } else {
-      title.textContent = "Please select a zodiac sign";
-      period.textContent = "-";
-      element.textContent = "-";
-      message.textContent = "Select your zodiac sign to receive emotional guidance for today.";
+    
+    function updateZodiacInfo(zodiacId) {
+      fetch('assets/data.json')
+        .then(response => response.json())
+        .then(data => {
+          const sign = data.zodiacSigns.find(s => s.sign.toLowerCase() === zodiacId);
+          if (!sign) return;
+          
+          zodiacTitle.textContent = sign.sign;
+          zodiacPeriod.textContent = sign.period;
+          zodiacElement.textContent = sign.element;
+          
+          const currentEmotion = getCurrentEmotion();
+          const advice = sign.advice[currentEmotion] || sign.advice["Happy"];
+          
+          const today = new Date();
+          const dateStr = today.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            weekday: 'long'
+          });
+          
+          zodiacMessage.innerHTML = `<strong>${dateStr}</strong><br><br>${advice}`;
+        })
+        .catch(error => {
+          console.error('Error updating zodiac info:', error);
+          zodiacMessage.textContent = 'Unable to get zodiac advice';
+        });
     }
+    
+    function getCurrentEmotion() {
+      const emotionHistory = loadEmotionHistory();
+      if (emotionHistory.length === 0) return "Happy";
+      
+      const today = new Date().toISOString().split('T')[0];
+      const todayEmotions = emotionHistory.filter(e => e.date === today);
+      
+      if (todayEmotions.length === 0) {
+        const lastEmotion = emotionHistory[emotionHistory.length - 1];
+        const emotionObj = emotions.find(e => e.id === lastEmotion.emotion);
+        return mapEmotionToEnglish(emotionObj?.name || "Happy");
+      }
+      
+      const counts = {};
+      todayEmotions.forEach(e => {
+        counts[e.emotion] = (counts[e.emotion] || 0) + 1;
+      });
+      
+      let maxCount = 0;
+      let mainEmotion = null;
+      for (const [emotion, count] of Object.entries(counts)) {
+        if (count > maxCount) {
+          maxCount = count;
+          mainEmotion = emotion;
+        }
+      }
+      
+      const emotionObj = emotions.find(e => e.id === mainEmotion);
+      return mapEmotionToEnglish(emotionObj?.name || "Happy");
+    }
+    
+    function mapEmotionToEnglish(englishEmotion) {
+      const mapping = {
+        'Happy': 'Happy',
+        'Excited': 'Excited',
+        'Calm': 'Calm',
+        'Sad': 'Sad',
+        'Anxious': 'Anxious',
+        'Angry': 'Angry',
+        'Tired': 'Tired',
+        'Grateful': 'Happy'
+      };
+      
+      return mapping[englishEmotion] || 'Happy';
+    }
+    
+    zodiacSelect.addEventListener('change', function() {
+      userZodiac = this.value;
+      localStorage.setItem('userZodiac', userZodiac);
+      updateZodiacInfo(userZodiac);
+    });
+    
+    saveZodiacBtn.addEventListener('click', function() {
+      userZodiac = initialZodiacSelect.value;
+      if (!userZodiac) {
+        showToast('Please select your zodiac sign', 'warning');
+        return;
+      }
+      
+      localStorage.setItem('userZodiac', userZodiac);
+      zodiacSelect.value = userZodiac;
+      updateZodiacInfo(userZodiac);
+      initialZodiacModal.classList.remove('active');
+      showToast('Zodiac setting successful!', 'success');
+    });
+  
+    loadZodiacData();
+  
+    populateEmotionGrid();
+    populateZodiacSelect();
+    renderEmotionHistory();
+    initializeStarMap();
   });
