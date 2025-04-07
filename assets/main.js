@@ -240,3 +240,15 @@ function createStar(cx, cy, size, color, opacity) {
 
 // Re-render star chart when window size changes
 window.addEventListener('resize', renderStarChart);
+
+const recordBtn = document.getElementById("record-emotion-btn");
+const modal = document.getElementById("emotion-modal");
+const closeModal = document.getElementById("close-modal");
+
+recordBtn.addEventListener("click", () => {
+  modal.classList.add("active");
+});
+
+closeModal.addEventListener("click", () => {
+  modal.classList.remove("active");
+});
