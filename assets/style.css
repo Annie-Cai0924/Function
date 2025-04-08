@@ -52,13 +52,6 @@
     z-index: 1;
   }
 
-.card {
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
 canvas {
     display: block;
     width: 100%;
