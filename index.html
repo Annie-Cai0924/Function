@@ -1,70 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Star Sky Emotion Tracker | Enterprise Zodiac Emotion Management Platform</title>
-  <link rel="stylesheet" href="assets/style.css">
-  <link rel="stylesheet" href="assets/reset.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-  <div class="app-wrapper">
-    <div class="top-bar">
-      <div class="logo">
-        <h1>Star Sky Emotion Tracker</h1>
-      </div>
-      <div class="top-actions">
-        <select id="zodiac-sign" class="form-control zodiac-select">
-          <option value="">Select Zodiac Sign</option>
-        </select>
-        <button id="record-emotion-btn" class="record-btn">
-          <i class="fas fa-plus"></i> Record Emotion
-        </button>
-      </div>
-    </div>
 
-    <div class="side-panel">
-      <div class="panel-card">
-          <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-star"></i> Today's Zodiac Advice</div>
-          </div>
-          <div class="panel-content">
-            <div id="zodiac-info">
-                <div class="zodiac-header">
-                    <strong id="zodiac-title">Please select a zodiac sign first</strong>
-                    <div><small id="zodiac-period">-</small></div>
-                    <div><small>Element: <span id="zodiac-element">-</span></small></div>
-                </div>
-                <p id="zodiac-message" class="zodiac-message">
-                    Please select your zodiac sign at the top to get today's emotional advice
-                </p>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Star Sky Emotion Tracker | Enterprise Zodiac Emotion Management Platform</title>
+    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-wrapper">
+        <div class="star-map-container">
+            <div class="star-map">
+                <canvas id="star-canvas"></canvas>
             </div>
         </div>
-    </div>
-
-    <div class="panel-card">
-      <div class="panel-header">
-          <div class="panel-title"><i class="fas fa-clock-rotate-left"></i> Emotion History</div>
-      </div>
-      <div class="panel-content">
-          <div id="history-panel" class="history-panel">
-              <div class="history-empty">No emotion records</div>
-          </div>
-      </div>
-  </div>
-</div>
-
-    <!-- Emotion Records -->
-  <div id="emotion-modal" class="modal-overlay">
+        <div class="top-bar">
+            <div class="logo">
+                <h1>Star Sky Emotion Tracker</h1>
+            </div>
+            <div class="top-actions">
+                <select id="zodiac-sign" class="form-control zodiac-select">
+                    <option value="">Select Zodiac Sign</option>
+                </select>
+                <button id="record-emotion-btn" class="record-btn">
+                    <i class="fas fa-plus"></i> Record Emotion
+                </button>
+            </div>
+        </div>
+        <div class="side-panel">
+            <div class="panel-card">
+                <div class="panel-header">
+                    <div class="panel-title"><i class="fas fa-star"></i> Today's Zodiac Advice</div>
+                </div>
+                <div class="panel-content">
+                    <div id="zodiac-info">
+                        <div class="zodiac-header">
+                            <strong id="zodiac-title">Please select a zodiac sign first</strong>
+                            <div><small id="zodiac-period">-</small></div>
+                            <div><small>Element: <span id="zodiac-element">-</span></small></div>
+                        </div>
+                        <p id="zodiac-message" class="zodiac-message">
+                            Please select your zodiac sign at the top to get today's emotional advice
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-card">
+                <div class="panel-header">
+                    <div class="panel-title"><i class="fas fa-clock-rotate-left"></i> Emotion History</div>
+                </div>
+                <div class="panel-content">
+                    <div id="history-panel" class="history-panel">
+                        <div class="history-empty">No emotion records</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="emotion-modal" class="modal-overlay">
             <div class="modal">
                 <div class="modal-header">
                     <div class="modal-title">Record Today's Emotion</div>
                     <button class="close-modal" id="close-modal">×</button>
                 </div>
 
-   <div class="modal-body">
+                
+                <div class="modal-body">
                     <form id="emotion-form">
                         <div class="form-group">
                             <label>Select Emotion</label>
@@ -89,7 +91,6 @@
             </div>
         </div>
     </div>
-
     <div id="toast" class="toast"></div>
     <div id="initial-zodiac-modal" class="modal-overlay active">
         <div class="modal">
@@ -107,7 +108,7 @@
             </div>
         </div>
     </div>
-
-  <script src="assets/main.js"></script>
+    <script src="assets/main.js"></script>
 </body>
+
 </html>
