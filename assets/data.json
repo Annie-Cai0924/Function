@@ -1,199 +1,198 @@
 {
-    "emotions": [
-      {
-        "id": 1,
-        "name": "Happy",
-        "color": "#FFD700",
-        "description": "Feeling joyful and content"
-      },
-      {
-        "id": 2,
-        "name": "Sad",
-        "color": "#6495ED",
-        "description": "Feeling down or melancholic"
-      },
-      {
-        "id": 3,
-        "name": "Anxious",
-        "color": "#FF6347",
-        "description": "Feeling worried or uneasy"
-      },
-      {
-        "id": 4,
-        "name": "Calm",
-        "color": "#98FB98",
-        "description": "Feeling peaceful and relaxed"
-      },
-      {
-        "id": 5,
-        "name": "Excited",
-        "color": "#FF69B4",
-        "description": "Feeling enthusiastic and eager"
-      },
-      {
-        "id": 6,
-        "name": "Tired",
-        "color": "#778899",
-        "description": "Feeling fatigued or exhausted"
+  "emotions": [
+    {
+      "id": 1,
+      "name": "Happy",
+      "color": "#FFD700",
+      "description": "Feeling joyful and content"
+    },
+    {
+      "id": 2,
+      "name": "Sad",
+      "color": "#6495ED",
+      "description": "Feeling down or melancholic"
+    },
+    {
+      "id": 3,
+      "name": "Anxious",
+      "color": "#FF6347",
+      "description": "Feeling worried or uneasy"
+    },
+    {
+      "id": 4,
+      "name": "Calm",
+      "color": "#98FB98",
+      "description": "Feeling peaceful and relaxed"
+    },
+    {
+      "id": 5,
+      "name": "Excited",
+      "color": "#FF69B4",
+      "description": "Feeling enthusiastic and eager"
+    },
+    {
+      "id": 6,
+      "name": "Tired",
+      "color": "#778899",
+      "description": "Feeling fatigued or exhausted"
+    }
+  ],
+  "zodiacSigns": [
+    {
+      "sign": "Aries",
+      "period": "March 21 - April 19",
+      "element": "Fire",
+      "advice": {
+        "Happy": "Channel your happiness into creative pursuits.",
+        "Sad": "Transform sadness into action, focus on small wins.",
+        "Anxious": "Physical activity will help ground your anxious energy.",
+        "Calm": "Use this calm state to plan your next big move.",
+        "Excited": "Share your excitement with others who need motivation.",
+        "Tired": "Short power naps will recharge your fiery spirit."
       }
-    ],
-    "zodiacSigns": [
-      {
-        "sign": "Aries",
-        "period": "March 21 - April 19",
-        "element": "Fire",
-        "advice": {
-          "Happy": "Channel your happiness into creative pursuits.",
-          "Sad": "Transform sadness into action, focus on small wins.",
-          "Anxious": "Physical activity will help ground your anxious energy.",
-          "Calm": "Use this calm state to plan your next big move.",
-          "Excited": "Share your excitement with others who need motivation.",
-          "Tired": "Short power naps will recharge your fiery spirit."
-        }
-      },
-      {
-        "sign": "Taurus",
-        "period": "April 20 - May 20",
-        "element": "Earth",
-        "advice": {
-          "Happy": "Indulge in life's pleasures, you've earned this happiness.",
-          "Sad": "Connect with nature to soothe your sadness.",
-          "Anxious": "Grounding rituals will help calm your anxious mind.",
-          "Calm": "This peaceful state is your natural home, embrace it.",
-          "Excited": "Channel excitement into practical plans for the future.",
-          "Tired": "Rest completely, your strength will return through proper rest."
-        }
-      },
-      {
-        "sign": "Gemini",
-        "period": "May 21 - June 20",
-        "element": "Air",
-        "advice": {
-          "Happy": "Share your joy through conversation and connection.",
-          "Sad": "Express your feelings through writing or talking.",
-          "Anxious": "Divide worries into smaller, manageable thoughts.",
-          "Calm": "Use this rare calm to focus on one important project.",
-          "Excited": "Your enthusiasm will inspire others around you.",
-          "Tired": "Mental fatigue needs mental rest - try meditation."
-        }
-      },
-      {
-        "sign": "Cancer",
-        "period": "June 21 - July 22",
-        "element": "Water",
-        "advice": {
-          "Happy": "Nurture others with your overflowing positive emotions.",
-          "Sad": "Allow yourself to feel deeply, then release through creative expression.",
-          "Anxious": "Remember your emotional strength has carried you through before.",
-          "Calm": "This emotional stability is perfect for strengthening relationships.",
-          "Excited": "Share your excitement with those closest to you.",
-          "Tired": "Creating a cozy space will help restore your energy."
-        }
-      },
-      {
-        "sign": "Leo",
-        "period": "July 23 - August 22",
-        "element": "Fire",
-        "advice": {
-          "Happy": "Let your happiness shine and inspire those around you.",
-          "Sad": "Express sadness through creative outlets that showcase your talents.",
-          "Anxious": "Remember your inner strength - you've overcome challenges before.",
-          "Calm": "Use this balanced state to mentor others who need guidance.",
-          "Excited": "Your enthusiasm is magnetic - lead others with your vision.",
-          "Tired": "Rest like royalty - you deserve proper rejuvenation."
-        }
-      },
-      {
-        "sign": "Virgo",
-        "period": "August 23 - September 22",
-        "element": "Earth",
-        "advice": {
-          "Happy": "Use this positive energy to tackle detailed projects you enjoy.",
-          "Sad": "Organize your space to help organize your feelings.",
-          "Anxious": "Make a detailed list of concerns to address one by one.",
-          "Calm": "Your analytical mind works best in this state - tackle complex problems.",
-          "Excited": "Channel excitement into productive routines and improvements.",
-          "Tired": "A structured rest period will help restore your energy efficiently."
-        }
-      },
-      {
-        "sign": "Libra",
-        "period": "September 23 - October 22",
-        "element": "Air",
-        "advice": {
-          "Happy": "Share your balanced joy with others who need harmony.",
-          "Sad": "Seek beauty around you to restore emotional balance.",
-          "Anxious": "Talk through your concerns with someone you trust.",
-          "Calm": "This balanced state is your natural element - make important decisions now.",
-          "Excited": "Your enthusiasm creates harmony - perfect for social gatherings.",
-          "Tired": "Balance rest with gentle activity to restore your energy."
-        }
-      },
-      {
-        "sign": "Scorpio",
-        "period": "October 23 - November 21",
-        "element": "Water",
-        "advice": {
-          "Happy": "This passionate joy can transform your creative projects.",
-          "Sad": "Channel intense emotions into transformative self-reflection.",
-          "Anxious": "Focus on what you can control and release what you cannot.",
-          "Calm": "Use this rare stillness to access your intuitive wisdom.",
-          "Excited": "Your intensity can drive meaningful change - focus it wisely.",
-          "Tired": "Deep rest will rejuvenate your powerful emotional reserves."
-        }
-      },
-      {
-        "sign": "Sagittarius",
-        "period": "November 22 - December 21",
-        "element": "Fire",
-        "advice": {
-          "Happy": "Your optimistic joy inspires adventure - follow where it leads.",
-          "Sad": "Movement and new scenery will help lift your spirits.",
-          "Anxious": "Philosophy and perspective-taking can ease your worries.",
-          "Calm": "This balanced state is perfect for learning something new.",
-          "Excited": "Your enthusiasm opens doors - say yes to new opportunities.",
-          "Tired": "Change your environment to rejuvenate your adventurous spirit."
-        }
-      },
-      {
-        "sign": "Capricorn",
-        "period": "December 22 - January 19",
-        "element": "Earth",
-        "advice": {
-          "Happy": "This positive energy can fuel your ambitious goals.",
-          "Sad": "Structure and small accomplishments will help lift melancholy.",
-          "Anxious": "Creating a clear plan will help calm your worried mind.",
-          "Calm": "Use this stable state to make progress on long-term plans.",
-          "Excited": "Channel this rare excitement into breaking new ground.",
-          "Tired": "Schedule deliberate rest as seriously as you schedule work."
-        }
-      },
-      {
-        "sign": "Aquarius",
-        "period": "January 20 - February 18",
-        "element": "Air",
-        "advice": {
-          "Happy": "Share your innovative joy through community connections.",
-          "Sad": "Connect with like-minded people who understand your unique perspective.",
-          "Anxious": "Humanitarian efforts will help redirect worried energy.",
-          "Calm": "This clear-minded state is perfect for visionary thinking.",
-          "Excited": "Your enthusiasm can spark social change - share your ideas.",
-          "Tired": "Disconnect from technology to truly recharge your energy."
-        }
-      },
-      {
-        "sign": "Pisces",
-        "period": "February 19 - March 20",
-        "element": "Water",
-        "advice": {
-          "Happy": "Channel this blissful state into creative or spiritual practices.",
-          "Sad": "Express emotions through art, music, or other creative outlets.",
-          "Anxious": "Meditation and visualization will help calm your sensitive spirit.",
-          "Calm": "Your intuition is strongest in this state - trust your inner voice.",
-          "Excited": "Your enthusiasm inspires magical connections - follow your heart.",
-          "Tired": "Gentle water-based activities will restore your dreamy energy."
-        }
+    },
+    {
+      "sign": "Taurus",
+      "period": "April 20 - May 20",
+      "element": "Earth",
+      "advice": {
+        "Happy": "Indulge in life's pleasures, you've earned this happiness.",
+        "Sad": "Connect with nature to soothe your sadness.",
+        "Anxious": "Grounding rituals will help calm your anxious mind.",
+        "Calm": "This peaceful state is your natural home, embrace it.",
+        "Excited": "Channel excitement into practical plans for the future.",
+        "Tired": "Rest completely, your strength will return through proper rest."
       }
-    ]
-  }
-  
+    },
+    {
+      "sign": "Gemini",
+      "period": "May 21 - June 20",
+      "element": "Air",
+      "advice": {
+        "Happy": "Share your joy through conversation and connection.",
+        "Sad": "Express your feelings through writing or talking.",
+        "Anxious": "Divide worries into smaller, manageable thoughts.",
+        "Calm": "Use this rare calm to focus on one important project.",
+        "Excited": "Your enthusiasm will inspire others around you.",
+        "Tired": "Mental fatigue needs mental rest - try meditation."
+      }
+    },
+    {
+      "sign": "Cancer",
+      "period": "June 21 - July 22",
+      "element": "Water",
+      "advice": {
+        "Happy": "Nurture others with your overflowing positive emotions.",
+        "Sad": "Allow yourself to feel deeply, then release through creative expression.",
+        "Anxious": "Remember your emotional strength has carried you through before.",
+        "Calm": "This emotional stability is perfect for strengthening relationships.",
+        "Excited": "Share your excitement with those closest to you.",
+        "Tired": "Creating a cozy space will help restore your energy."
+      }
+    },
+    {
+      "sign": "Leo",
+      "period": "July 23 - August 22",
+      "element": "Fire",
+      "advice": {
+        "Happy": "Let your happiness shine and inspire those around you.",
+        "Sad": "Express sadness through creative outlets that showcase your talents.",
+        "Anxious": "Remember your inner strength - you've overcome challenges before.",
+        "Calm": "Use this balanced state to mentor others who need guidance.",
+        "Excited": "Your enthusiasm is magnetic - lead others with your vision.",
+        "Tired": "Rest like royalty - you deserve proper rejuvenation."
+      }
+    },
+    {
+      "sign": "Virgo",
+      "period": "August 23 - September 22",
+      "element": "Earth",
+      "advice": {
+        "Happy": "Use this positive energy to tackle detailed projects you enjoy.",
+        "Sad": "Organize your space to help organize your feelings.",
+        "Anxious": "Make a detailed list of concerns to address one by one.",
+        "Calm": "Your analytical mind works best in this state - tackle complex problems.",
+        "Excited": "Channel excitement into productive routines and improvements.",
+        "Tired": "A structured rest period will help restore your energy efficiently."
+      }
+    },
+    {
+      "sign": "Libra",
+      "period": "September 23 - October 22",
+      "element": "Air",
+      "advice": {
+        "Happy": "Share your balanced joy with others who need harmony.",
+        "Sad": "Seek beauty around you to restore emotional balance.",
+        "Anxious": "Talk through your concerns with someone you trust.",
+        "Calm": "This balanced state is your natural element - make important decisions now.",
+        "Excited": "Your enthusiasm creates harmony - perfect for social gatherings.",
+        "Tired": "Balance rest with gentle activity to restore your energy."
+      }
+    },
+    {
+      "sign": "Scorpio",
+      "period": "October 23 - November 21",
+      "element": "Water",
+      "advice": {
+        "Happy": "This passionate joy can transform your creative projects.",
+        "Sad": "Channel intense emotions into transformative self-reflection.",
+        "Anxious": "Focus on what you can control and release what you cannot.",
+        "Calm": "Use this rare stillness to access your intuitive wisdom.",
+        "Excited": "Your intensity can drive meaningful change - focus it wisely.",
+        "Tired": "Deep rest will rejuvenate your powerful emotional reserves."
+      }
+    },
+    {
+      "sign": "Sagittarius",
+      "period": "November 22 - December 21",
+      "element": "Fire",
+      "advice": {
+        "Happy": "Your optimistic joy inspires adventure - follow where it leads.",
+        "Sad": "Movement and new scenery will help lift your spirits.",
+        "Anxious": "Philosophy and perspective-taking can ease your worries.",
+        "Calm": "This balanced state is perfect for learning something new.",
+        "Excited": "Your enthusiasm opens doors - say yes to new opportunities.",
+        "Tired": "Change your environment to rejuvenate your adventurous spirit."
+      }
+    },
+    {
+      "sign": "Capricorn",
+      "period": "December 22 - January 19",
+      "element": "Earth",
+      "advice": {
+        "Happy": "This positive energy can fuel your ambitious goals.",
+        "Sad": "Structure and small accomplishments will help lift melancholy.",
+        "Anxious": "Creating a clear plan will help calm your worried mind.",
+        "Calm": "Use this stable state to make progress on long-term plans.",
+        "Excited": "Channel this rare excitement into breaking new ground.",
+        "Tired": "Schedule deliberate rest as seriously as you schedule work."
+      }
+    },
+    {
+      "sign": "Aquarius",
+      "period": "January 20 - February 18",
+      "element": "Air",
+      "advice": {
+        "Happy": "Share your innovative joy through community connections.",
+        "Sad": "Connect with like-minded people who understand your unique perspective.",
+        "Anxious": "Humanitarian efforts will help redirect worried energy.",
+        "Calm": "This clear-minded state is perfect for visionary thinking.",
+        "Excited": "Your enthusiasm can spark social change - share your ideas.",
+        "Tired": "Disconnect from technology to truly recharge your energy."
+      }
+    },
+    {
+      "sign": "Pisces",
+      "period": "February 19 - March 20",
+      "element": "Water",
+      "advice": {
+        "Happy": "Channel this blissful state into creative or spiritual practices.",
+        "Sad": "Express emotions through art, music, or other creative outlets.",
+        "Anxious": "Meditation and visualization will help calm your sensitive spirit.",
+        "Calm": "Your intuition is strongest in this state - trust your inner voice.",
+        "Excited": "Your enthusiasm inspires magical connections - follow your heart.",
+        "Tired": "Gentle water-based activities will restore your dreamy energy."
+      }
+    }
+  ]
+}

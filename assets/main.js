@@ -598,7 +598,7 @@ document.addEventListener('DOMContentLoaded', function() {
       ctx.beginPath();
       ctx.arc(currentX, currentY, 2, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-      ctx.fill();
+      ctx.fill(); 
       ctx.restore();
     }
 
