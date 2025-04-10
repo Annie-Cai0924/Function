@@ -529,6 +529,79 @@ document.addEventListener('DOMContentLoaded', function() {
     
     let shootingStars = [];
 
+    function createShootingStar() {
+      if (shootingStars.length >= 5) return;
+      
+      const startX = Math.random() * starCanvas.width;
+      const startY = 0;
+      
+      const angle = Math.PI / 4 + Math.random() * Math.PI / 4;
+      const length = 100 + Math.random() * 150;
+      
+      const speed = 5 + Math.random() * 10;
+      
+      const colors = ['#ffffff', '#aaaaff', '#ffaaaa', '#aaffaa'];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      
+      shootingStars.push({
+        x: startX,
+        y: startY,
+        angle,
+        length,
+        speed,
+        color,
+        progress: 0,
+        opacity: 1
+      });
+    }
+
+    function updateShootingStars() {
+      shootingStars = shootingStars.filter(star => {
+        star.progress += star.speed / 100;
+        
+        if (star.progress >= 1) return false;
+        
+        drawShootingStar(star);
+        return true;
+      });
+    }
+
+    function drawShootingStar(star) {
+      ctx.save();
+      
+      const endX = star.x + Math.cos(star.angle) * star.length;
+      const endY = star.y + Math.sin(star.angle) * star.length;
+      
+      const currentX = star.x + Math.cos(star.angle) * star.length * star.progress;
+      const currentY = star.y + Math.sin(star.angle) * star.length * star.progress;
+      
+      const gradient = ctx.createLinearGradient(
+        currentX, currentY,
+        currentX - Math.cos(star.angle) * 30, 
+        currentY - Math.sin(star.angle) * 30
+      );
+      
+      gradient.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+      gradient.addColorStop(0.1, `rgba(${hexToRgb(star.color)}, 0.7)`);
+      gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      
+      ctx.beginPath();
+      ctx.moveTo(currentX, currentY);
+      ctx.lineTo(
+        currentX - Math.cos(star.angle) * 30, 
+        currentY - Math.sin(star.angle) * 30
+      );
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = gradient;
+      ctx.stroke();
+      
+      ctx.beginPath();
+      ctx.arc(currentX, currentY, 2, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      ctx.fill();
+      ctx.restore();
+    }
+
     function hexToRgb(hex) {
       hex = hex.replace('#', '');
       
