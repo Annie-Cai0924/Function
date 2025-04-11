@@ -19,6 +19,8 @@ document.addEventListener('DOMContentLoaded', function() {
     { id: 'grateful', name: 'Grateful', color: '#32CD32', icon: '🙏' }
   ];
 
+  //It's what I use to keep all the basic data on the constellations. Every constellation is an object
+
   //Define the data of 12horoscopes
   //Name: horoscopes' name (to display)
   //Id: horoscopes's name
@@ -38,12 +40,16 @@ document.addEventListener('DOMContentLoaded', function() {
     { id: 'pisces', name: 'Pisces', period: 'February 19 - March 20', element: 'Water' }
   ];
 
+  //My friend told me to refer to the basic DOM manipulation methods, such as using document.getElementById() to select a specific ID in HTML, so that I can use JavaScript to control these elements, such as displaying a pop-up window, updating the value of the slider, Or automatically fill in today's date.
+
+  //when user click on an emotion and it highlights; You drag the slider, it will show the strength value in real time; When you select a constellation, it will be saved and can be used the next time you open the page. This is also the basis for the smooth operation of the entire constellation mood tracking project.
+  
   //Get the data from html
   //display the emotion options
   const emotionGrid = document.getElementById('emotion-grid');
   //Range the emotion indensity
   const intensityInput = document.getElementById('intensity');
-  
+
   const intensityValue = document.getElementById('intensity-value');
   const dateInput = document.getElementById('date');
   const emotionForm = document.getElementById('emotion-form');
