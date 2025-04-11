@@ -1,7 +1,13 @@
+// Wait for the HTML document to be fully loaded and parsed
 document.addEventListener('DOMContentLoaded', function() {
+
+  // Retrieve constellations in local storage
   let userZodiac = localStorage.getItem('userZodiac') || '';
+  // store daily advice data for each zodiac sig but when it is a empty it will be initialized
   const dailyAdviceData = {};
   
+  //make a pop window of emotions that the user can choose 
+  //Every emoji will be a star dispaly on the canvas
   const emotions = [
     { id: 'happy', name: 'Happy', color: '#FFD700', icon: '😊' },
     { id: 'excited', name: 'Excited', color: '#FF4500', icon: '🤩' },
@@ -13,6 +19,10 @@ document.addEventListener('DOMContentLoaded', function() {
     { id: 'grateful', name: 'Grateful', color: '#32CD32', icon: '🙏' }
   ];
 
+  //Define the data of 12horoscopes
+  //Name: horoscopes' name (to display)
+  //Id: horoscopes's name
+  //element: the four classic element
   const zodiacSigns = [
     { id: 'aries', name: 'Aries', period: 'March 21 - April 19', element: 'Fire' },
     { id: 'taurus', name: 'Taurus', period: 'April 20 - May 20', element: 'Earth' },
@@ -28,8 +38,12 @@ document.addEventListener('DOMContentLoaded', function() {
     { id: 'pisces', name: 'Pisces', period: 'February 19 - March 20', element: 'Water' }
   ];
 
+  //Get the data from html
+  //display the emotion options
   const emotionGrid = document.getElementById('emotion-grid');
+  //Range the emotion indensity
   const intensityInput = document.getElementById('intensity');
+  
   const intensityValue = document.getElementById('intensity-value');
   const dateInput = document.getElementById('date');
   const emotionForm = document.getElementById('emotion-form');
