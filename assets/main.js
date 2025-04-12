@@ -53,11 +53,18 @@ document.addEventListener('DOMContentLoaded', function() {
   const emotionGrid = document.getElementById('emotion-grid');
   //Range the emotion indensity
   const intensityInput = document.getElementById('intensity');
-
+  //This is the spot on the page where the "emotional strength number" is displayed，displays the value selected by the slider
   const intensityValue = document.getElementById('intensity-value');
+  //This is to get the date input box on the page. 
+  //I use it to pick today or a day in the past to record emotions.
   const dateInput = document.getElementById('date');
+  //This is the container for the entire "mood record form" (including mood, date, intensity, and so on). 
+  //It is used when you submit records.
   const emotionForm = document.getElementById('emotion-form');
+  //this is used to display the emotional history recorded in the past. 
+//It's like a mood diary area where you can see your previous mood records.
   const historyPanel = document.getElementById('history-panel');
+  
   const starCanvas = document.getElementById('star-canvas');
   const zodiacSelect = document.getElementById('zodiac-sign');
   const zodiacInfo = document.getElementById('zodiac-info');
