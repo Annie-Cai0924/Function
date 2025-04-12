@@ -61,34 +61,57 @@ document.addEventListener('DOMContentLoaded', function() {
   //This is the container for the entire "mood record form" (including mood, date, intensity, and so on). 
   //It is used when you submit records.
   const emotionForm = document.getElementById('emotion-form');
-  //this is used to display the emotional history recorded in the past. 
-//It's like a mood diary area where you can see your previous mood records.
+  //this is used to display the emotional history recorded in the past. It's like a mood diary area where you can see your previous mood records.
   const historyPanel = document.getElementById('history-panel');
-  
+  //This is the canvas element for drawing stars,  That's where you visualize your emotional record
   const starCanvas = document.getElementById('star-canvas');
+  //This is the drop-down menu for the constellation. I use this zodiac sign to give personalized suggestions to users.
   const zodiacSelect = document.getElementById('zodiac-sign');
+  //This is a large container of constellation information area, which will put the following contents, such as constellation name, time, elements, and so on.
   const zodiacInfo = document.getElementById('zodiac-info');
+  //This is used to display constellation names
   const zodiacTitle = document.getElementById('zodiac-title');
+  //Displays the time period corresponding to this constellation
   const zodiacPeriod = document.getElementById('zodiac-period');
+  //Displays the four elements corresponding to this constellation
   const zodiacElement = document.getElementById('zodiac-element');
+  //This is a place to display "daily advice"
   const zodiacMessage = document.getElementById('zodiac-message');
+  //This is the button that says "Record your emotions." When you click on it, a form is submitted or an input window pops up
   const recordEmotionBtn = document.getElementById('record-emotion-btn');
+  //This is a popup window for entering your mood record, and it pops up when you click the button
   const emotionModal = document.getElementById('emotion-modal');
+  //Close the popup button
   const closeModal = document.getElementById('close-modal');
+  //The "Please select your star sign" pop-up that pops up when you first use it
   const initialZodiacModal = document.getElementById('initial-zodiac-modal');
+  //The constellation selection menu in the initial popup window
   const initialZodiacSelect = document.getElementById('initial-zodiac-select');
+  //the "Confirm constellation selection" button
   const saveZodiacBtn = document.getElementById('save-zodiac-btn');
+  //This is the grab mobile version of the menu button (usually the "burger icon" with three horizontal lines). 
+//When the user clicks the button on their phone, the side panel opens.
   const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  //This is the button that closes the sidebar, probably a ❌ icon. 
+//When the user clicks on it, the sidebar is hidden.
   const closeSidePanel = document.getElementById('close-side-panel');
+  //This is to grab the entire side menu container, using the class name.side-panel instead of the ID
   const sidePanel = document.querySelector('.side-panel');
+  //This is the "record your emotions" button under the phone interface. 
+//it may be placed somewhere like the bottom bar to make it easier for users to open the emotion popup on their phones.
   const mobileRecordBtn = document.getElementById('mobile-record-btn');
-
+//This converts the date format to yyyy-mm-dd (because <input type="date"> requires this format). 
+//.toISOString() returns a format like 2025-04-12T14:28:00.000Z, 
+//.split('T')[0] is to take the previous 2025-04-12.
   const today = new Date();
   const formattedDate = today.toISOString().split('T')[0];
+  //this is set the default value of the date input box to today
   dateInput.value = formattedDate;
-  
+  //The maximum value of the date picker cannot exceed today
   dateInput.max = formattedDate;
-  
+
+
+
   function toggleMobileMenu(show) {
     if (show) {
       sidePanel.classList.add('active');
