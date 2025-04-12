@@ -118,24 +118,46 @@ document.addEventListener('DOMContentLoaded', function() {
     if (show) {
       //This will give.side-panel an active class name, which in CSS would normally make the sidebar slide out
       sidePanel.classList.add('active');
+      //this line is to prevent the background page from scrolling, the user can only operate the menu when the menu is opened, and will not slide to the bottom of the page
       document.body.style.overflow = 'hidden';
       
+
+      //This is the animation after a delay of 100 milliseconds, giving the contents of the menu (such as cards) a small "debut" time to look more natural.
       setTimeout(() => {
+        
+        //Here's finding all the.panel-cards in the sidebar and animating them one by one. 
+    //index is the order of each card, which is used to control the "playing order" of the animation.
         document.querySelectorAll('.side-panel .panel-card').forEach((card, index) => {
+
+          //Here is make each card "invisible" and move it down a little bit
           card.style.opacity = '0';
           card.style.transform = 'translateY(20px)';
           setTimeout(() => {
+
+            //Here's one by one for each card after index * 100 milliseconds: 
+// Gradually become transparent 100 (appear) 
+//Move back to the original position 
+//This will animate the sequence in which the cards pop in
             card.style.transition = 'all 0.4s ease';
             card.style.opacity = '1';
             card.style.transform = 'translateY(0)';
           }, index * 100);
         });
       }, 100);
+
+
+
+      //If pass false, the user wants to close the menu
     } else {
+      //remove active and the menu will slide back into hiding
       sidePanel.classList.remove('active');
+
+      //Restore the body scroll to its original form, and the user can scroll the page again
       document.body.style.overflow = '';
     }
   }
+  
+
   
   function closeMenuIfMobile() {
     if (window.innerWidth <= 375 && sidePanel.classList.contains('active')) {
