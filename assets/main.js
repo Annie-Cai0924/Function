@@ -6,9 +6,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // store daily advice data for each zodiac sig but when it is a empty it will be initialized
   const dailyAdviceData = {};
   
-  //The function of this array is that when the front end shows the user to choose emotions, it can get "what name to show", "what color to use", "what expression to match" directly from here. And then I can use these colors or ICONS to visualize the emotional record, like drawing charts or pointing stars. 
+  //The function of this array is that when the front end shows the user to choose emotions, it can get "what name to show", "what color to use", "what expression to match" directly from here. And then I can use these colors or ICONS to visualize the emotional record, like drawing charts or pointing stars
  
-//My inspiration for this design also comes from the application of emotion tracking, which emphasizes the graphical expression of emotions, which I think is more intuitive and cute for users.
+  //my inspiration for this design also comes from the application of emotion tracking, which emphasizes the graphical expression of emotions, which I think is more intuitive and cute for users
   //make a pop window of emotions that the user can choose 
   //Every emoji will be a star dispaly on the canvas
   const emotions = [
@@ -44,9 +44,9 @@ document.addEventListener('DOMContentLoaded', function() {
     { id: 'pisces', name: 'Pisces', period: 'February 19 - March 20', element: 'Water' }
   ];
 
-  //My friend told me to refer to the basic DOM manipulation methods, such as using document.getElementById() to select a specific ID in HTML, so that I can use JavaScript to control these elements, such as displaying a pop-up window, updating the value of the slider, Or automatically fill in today's date.
+  //My friend told me to refer to the basic DOM manipulation methods, such as using document.getElementById() to select a specific ID in HTML, so that I can use JavaScript to control these elements, such as displaying a pop-up window, updating the value of the slider, Or automatically fill in today's date
 
-  //when user click on an emotion and it highlights; You drag the slider, it will show the strength value in real time; When you select a constellation, it will be saved and can be used the next time you open the page. This is also the basis for the smooth operation of the entire constellation mood tracking project.
+  //when user click on an emotion and it highlights; You drag the slider, it will show the strength value in real time; When you select a constellation, it will be saved and can be used the next time you open the page. This is also the basis for the smooth operation of the entire constellation mood tracking project
 
   //Get the data from html
   //display the emotion options
@@ -78,12 +78,142 @@ document.addEventListener('DOMContentLoaded', function() {
   const initialZodiacModal = document.getElementById('initial-zodiac-modal');
   const initialZodiacSelect = document.getElementById('initial-zodiac-select');
   const saveZodiacBtn = document.getElementById('save-zodiac-btn');
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  const closeSidePanel = document.getElementById('close-side-panel');
+  const sidePanel = document.querySelector('.side-panel');
+  const mobileRecordBtn = document.getElementById('mobile-record-btn');
 
   const today = new Date();
   const formattedDate = today.toISOString().split('T')[0];
   dateInput.value = formattedDate;
   
   dateInput.max = formattedDate;
+  
+  function toggleMobileMenu(show) {
+    if (show) {
+      sidePanel.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      
+      setTimeout(() => {
+        document.querySelectorAll('.side-panel .panel-card').forEach((card, index) => {
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(20px)';
+          setTimeout(() => {
+            card.style.transition = 'all 0.4s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+          }, index * 100);
+        });
+      }, 100);
+    } else {
+      sidePanel.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  }
+  
+  function closeMenuIfMobile() {
+    if (window.innerWidth <= 375 && sidePanel.classList.contains('active')) {
+      toggleMobileMenu(false);
+    }
+  }
+  
+  function openModal(modal) {
+    closeMenuIfMobile();
+    modal.classList.add('active');
+    
+    setTimeout(() => {
+      if (modal.querySelector('.modal')) {
+        modal.querySelector('.modal').style.transform = 'translateY(0) scale(1)';
+        modal.querySelector('.modal').style.opacity = '1';
+      }
+    }, 10);
+  }
+  
+  function closeModalAnimation(modal) {
+    if (modal.querySelector('.modal')) {
+      modal.querySelector('.modal').style.transform = 'translateY(30px) scale(0.95)';
+      modal.querySelector('.modal').style.opacity = '0';
+    }
+    
+    setTimeout(() => {
+      modal.classList.remove('active');
+    }, 300);
+  }
+  
+  mobileMenuBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleMobileMenu(true);
+    
+    console.log('Mobile menu button clicked');
+  }, true);
+  
+  closeSidePanel.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleMobileMenu(false);
+  }, true);
+  
+  sidePanel.addEventListener('click', function(e) {
+    e.stopPropagation();
+  }, true);
+  
+  const menuTooltip = document.querySelector('.mobile-menu-tooltip');
+  if (menuTooltip) {
+    menuTooltip.style.display = 'none';
+  }
+  
+  document.addEventListener('click', function(e) {
+    if (window.innerWidth <= 375 && 
+        sidePanel.classList.contains('active') &&
+        !sidePanel.contains(e.target) && 
+        e.target !== mobileMenuBtn &&
+        !mobileMenuBtn.contains(e.target)) {
+      toggleMobileMenu(false);
+    }
+  });
+  
+  mobileRecordBtn.addEventListener('click', function() {
+    closeMenuIfMobile();
+    openModal(emotionModal);
+  });
+
+  function handleResponsiveLayout() {
+    if (window.innerWidth <= 375) {
+      if (sidePanel.classList.contains('active') && window.innerWidth > 375) {
+        sidePanel.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+      
+      const starContainer = document.querySelector('.star-map-container');
+      if (starContainer) {
+        starContainer.style.height = '100%';
+        starContainer.style.width = '100%';
+        starContainer.style.overflow = 'hidden';
+      }
+      
+      if (starCanvas) {
+        resizeStarCanvas();
+      }
+    }
+  }
+
+  function resizeStarCanvas() {
+    if (!starCanvas) return;
+    
+    const container = starCanvas.parentElement;
+    if (!container) return;
+    
+    starCanvas.width = container.offsetWidth;
+    starCanvas.height = container.offsetHeight;
+    
+    if (typeof initializeStarMap === 'function') {
+      initializeStarMap();
+    }
+  }
+  
+  handleResponsiveLayout();
+  window.addEventListener('resize', handleResponsiveLayout);
 
   intensityInput.addEventListener('input', function() {
     intensityValue.textContent = this.value;
@@ -119,6 +249,38 @@ document.addEventListener('DOMContentLoaded', function() {
       option.textContent = sign.name;
       zodiacSelect.appendChild(option);
     });
+    
+    if (window.innerWidth <= 375) {
+      let zodiacMobileSelect = document.getElementById('zodiac-mobile-select');
+      
+      if (!zodiacMobileSelect) {
+        const zodiacHeader = document.querySelector('.zodiac-header');
+        zodiacMobileSelect = document.createElement('select');
+        zodiacMobileSelect.id = 'zodiac-mobile-select';
+        zodiacMobileSelect.className = 'form-control';
+        zodiacMobileSelect.innerHTML = '<option value="">Select Zodiac Sign</option>';
+        
+        zodiacSigns.forEach(sign => {
+          const option = document.createElement('option');
+          option.value = sign.id;
+          option.textContent = sign.name;
+          zodiacMobileSelect.appendChild(option);
+        });
+        
+        if (userZodiac) {
+          zodiacMobileSelect.value = userZodiac;
+        }
+        
+        zodiacMobileSelect.addEventListener('change', function() {
+          userZodiac = this.value;
+          zodiacSelect.value = userZodiac;
+          localStorage.setItem('userZodiac', userZodiac);
+          updateZodiacInfo(userZodiac);
+        });
+        
+        zodiacHeader.insertBefore(zodiacMobileSelect, zodiacHeader.firstChild);
+      }
+    }
   }
 
   function showZodiacInfo(zodiacId) {
@@ -229,7 +391,7 @@ document.addEventListener('DOMContentLoaded', function() {
       return groups;
     }, {});
   }
-
+  
   function formatDateHeader(dateStr) {
     const date = new Date(dateStr);
     const today = new Date();
@@ -244,521 +406,33 @@ document.addEventListener('DOMContentLoaded', function() {
       return dateStr;
     }
   }
-
+  
   function formatTime(timestamp) {
     const date = new Date(timestamp);
     const hours = date.getHours().toString().padStart(2, '0');
     const minutes = date.getMinutes().toString().padStart(2, '0');
     return `${hours}:${minutes}`;
   }
-
+  
   function formatDate(date) {
     return date.toISOString().split('T')[0];
   }
-
-  function deleteEmotion(id) {
-    let emotions = loadEmotionHistory();
-    emotions = emotions.filter(e => e.id !== id);
-    saveEmotions(emotions);
-    renderEmotionHistory();
-    initializeStarMap();
-    showToast('Record deleted', 'info');
-  }
-
-  function showToast(message, type = 'success') {
-    const toast = document.getElementById('toast');
-    toast.className = `toast ${type}`;
-    
-    let icon = '';
-    switch(type) {
-      case 'success': icon = '<i class="fas fa-check-circle"></i> '; break;
-      case 'error': icon = '<i class="fas fa-exclamation-circle"></i> '; break;
-      case 'warning': icon = '<i class="fas fa-exclamation-triangle"></i> '; break;
-      case 'info': icon = '<i class="fas fa-info-circle"></i> '; break;
+  
+  recordEmotionBtn.addEventListener('click', function() {
+    closeMenuIfMobile();
+    openModal(emotionModal);
+  });
+  
+  closeModal.addEventListener('click', function() {
+    closeModalAnimation(emotionModal);
+  });
+  
+  emotionModal.addEventListener('click', function(e) {
+    if (e.target === emotionModal) {
+      closeModalAnimation(emotionModal);
     }
-    
-    toast.innerHTML = `${icon}${message}`;
-    toast.classList.add('visible');
-    
-    setTimeout(() => {
-      toast.classList.remove('visible');
-    }, 3000);
-  }
-
-  function initializeStarMap() {
-    const emotionHistory = loadEmotionHistory();
-    const ctx = starCanvas.getContext('2d');
-    
-    let stars = [];
-    let constellationLines = [];
-    let backgroundStars = [];
-    let animationFrame;
-    
-    const resizeCanvas = () => {
-      const container = starCanvas.parentElement;
-      starCanvas.width = container.offsetWidth;
-      starCanvas.height = container.offsetHeight;
-      
-      createStars();
-      createBackgroundStars();
-    };
-    
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-    
-    function createStars() {
-      stars = [];
-      
-      if (emotionHistory.length === 0) return;
-      
-      emotionHistory.forEach((emotion, index) => {
-        const emotionData = emotions.find(e => e.id === emotion.emotion);
-        if (!emotionData) return;
-        
-        const seedX = parseInt(emotion.id) % 10000;
-        const seedY = parseInt(emotion.id) / 10000;
-        
-        const angleOffset = index * (Math.PI * 0.7);
-        const distanceFromCenter = 50 + (emotion.intensity * 20);
-        
-        const x = (starCanvas.width / 2) + Math.cos(seedX + angleOffset) * distanceFromCenter;
-        const y = (starCanvas.height / 2) + Math.sin(seedY + angleOffset) * distanceFromCenter;
-        
-        const size = 2 + (emotion.intensity / 2);
-        
-        stars.push({
-          x,
-          y,
-          size,
-          color: emotionData.color,
-          points: 5 + Math.floor(Math.random() * 2),
-          rotation: Math.random() * Math.PI * 2,
-          phase: Math.random() * Math.PI * 2,
-          emotionData: {
-            id: emotion.id,
-            name: emotionData.name,
-            intensity: emotion.intensity,
-            timestamp: emotion.timestamp
-          }
-        });
-      });
-      
-      createConstellationLines();
-    }
-    
-    function createConstellationLines() {
-      constellationLines = [];
-      
-      if (stars.length < 2) return;
-      
-      stars.forEach((star, i) => {
-        const distances = [];
-        
-        for (let j = 0; j < stars.length; j++) {
-          if (i === j) continue;
-          
-          const otherStar = stars[j];
-          const dx = star.x - otherStar.x;
-          const dy = star.y - otherStar.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          
-          if (distance < starCanvas.width / 4) {
-            distances.push({ index: j, distance });
-          }
-        }
-        
-        distances.sort((a, b) => a.distance - b.distance);
-        
-        const connectCount = 1 + Math.floor(Math.random() * 2);
-        for (let k = 0; k < Math.min(connectCount, distances.length); k++) {
-          const j = distances[k].index;
-          
-          const lineExists = constellationLines.some(line => 
-            (line.from === i && line.to === j) || (line.from === j && line.to === i)
-          );
-          
-          if (!lineExists) {
-            constellationLines.push({
-              from: i,
-              to: j,
-              alpha: 0.1 + Math.random() * 0.2
-            });
-          }
-        }
-      });
-    }
-    
-    function createBackgroundStars() {
-      backgroundStars = [];
-      const starCount = Math.floor(starCanvas.width * starCanvas.height / 1000);
-      
-      for (let i = 0; i < starCount; i++) {
-        backgroundStars.push({
-          x: Math.random() * starCanvas.width,
-          y: Math.random() * starCanvas.height,
-          size: 0.1 + Math.random() * 1,
-          alpha: 0.1 + Math.random() * 0.6,
-          pulse: 0.5 + Math.random() * 0.5,
-          phase: Math.random() * Math.PI * 2
-        });
-      }
-    }
-    
-    function animate() {
-      ctx.clearRect(0, 0, starCanvas.width, starCanvas.height);
-      
-      drawBackground();
-      
-      drawBackgroundStars();
-      
-      if (emotionHistory.length === 0) {
-        ctx.font = '18px Inter, sans-serif';
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-        ctx.textAlign = 'center';
-        ctx.fillText('Record your first emotion to create your star map', starCanvas.width / 2, starCanvas.height / 2);
-        animationFrame = requestAnimationFrame(animate);
-        return;
-      }
-      
-      drawConstellationLines();
-      
-      stars.forEach(star => drawStar(star));
-      
-      if (Math.random() < 0.01) {
-        createShootingStar();
-      }
-      
-      updateShootingStars();
-      
-      animationFrame = requestAnimationFrame(animate);
-    }
-    
-    function drawBackground() {
-      const gradient = ctx.createRadialGradient(
-        starCanvas.width / 2, starCanvas.height / 2, 0,
-        starCanvas.width / 2, starCanvas.height / 2, starCanvas.width * 0.7
-      );
-      
-      gradient.addColorStop(0, 'rgba(25, 25, 50, 1)');
-      gradient.addColorStop(0.5, 'rgba(15, 15, 35, 1)');
-      gradient.addColorStop(1, 'rgba(5, 5, 20, 1)');
-      
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, starCanvas.width, starCanvas.height);
-      
-      for (let i = 0; i < 5; i++) {
-        const cloudGradient = ctx.createRadialGradient(
-          Math.random() * starCanvas.width,
-          Math.random() * starCanvas.height,
-          0,
-          Math.random() * starCanvas.width,
-          Math.random() * starCanvas.height,
-          starCanvas.width * 0.2
-        );
-        
-        const hue = Math.random() * 60;
-        const saturation = 30 + Math.random() * 30;
-        const lightness = 5 + Math.random() * 10;
-        
-        cloudGradient.addColorStop(0, `hsla(${hue}, ${saturation}%, ${lightness}%, 0.1)`);
-        cloudGradient.addColorStop(1, 'transparent');
-        
-        ctx.fillStyle = cloudGradient;
-        ctx.fillRect(0, 0, starCanvas.width, starCanvas.height);
-      }
-    }
-    
-    function drawBackgroundStars() {
-      backgroundStars.forEach(star => {
-        star.phase += 0.01;
-        
-        const alpha = star.alpha * (0.5 + Math.sin(star.phase) * 0.5 * star.pulse);
-        
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-        ctx.fill();
-      });
-    }
-    
-    function drawConstellationLines() {
-      constellationLines.forEach(line => {
-        const fromStar = stars[line.from];
-        const toStar = stars[line.to];
-        
-        const gradient = ctx.createLinearGradient(
-          fromStar.x, fromStar.y,
-          toStar.x, toStar.y
-        );
-        
-        gradient.addColorStop(0, adjustColorAlpha(fromStar.color, line.alpha));
-        gradient.addColorStop(1, adjustColorAlpha(toStar.color, line.alpha));
-        
-        ctx.beginPath();
-        ctx.moveTo(fromStar.x, fromStar.y);
-        ctx.lineTo(toStar.x, toStar.y);
-        ctx.strokeStyle = gradient;
-        ctx.lineWidth = 1;
-        ctx.stroke();
-      });
-    }
-    
-    function adjustColorAlpha(color, alpha) {
-      if (color.startsWith('#')) {
-        const r = parseInt(color.substr(1, 2), 16);
-        const g = parseInt(color.substr(3, 2), 16);
-        const b = parseInt(color.substr(5, 2), 16);
-        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-      }
-      return color;
-    }
-    
-    function drawStar(star) {
-      ctx.save();
-      
-      star.phase += 0.01;
-      
-      ctx.translate(star.x, star.y);
-      
-      ctx.rotate(star.rotation + Math.sin(star.phase * 0.2) * 0.05);
-      
-      const scale = 1 + Math.sin(star.phase) * 0.1;
-      ctx.scale(scale, scale);
-      
-      const points = star.points;
-      const outerRadius = star.size;
-      const innerRadius = star.size * 0.4;
-      
-      const gradient = ctx.createRadialGradient(0, 0, innerRadius, 0, 0, outerRadius * 3);
-      gradient.addColorStop(0, adjustColorAlpha(star.color, 0.8));
-      gradient.addColorStop(0.5, adjustColorAlpha(star.color, 0.2));
-      gradient.addColorStop(1, 'transparent');
-      
-      ctx.beginPath();
-      ctx.arc(0, 0, outerRadius * 3, 0, Math.PI * 2);
-      ctx.fillStyle = gradient;
-      ctx.fill();
-      
-      ctx.beginPath();
-      for (let i = 0; i < points * 2; i++) {
-        const radius = i % 2 === 0 ? outerRadius : innerRadius;
-        const angle = (i * Math.PI) / points;
-        
-        if (i === 0) {
-          ctx.moveTo(Math.cos(angle) * radius, Math.sin(angle) * radius);
-        } else {
-          ctx.lineTo(Math.cos(angle) * radius, Math.sin(angle) * radius);
-        }
-      }
-      
-      ctx.closePath();
-      ctx.fillStyle = star.color;
-      ctx.fill();
-      
-      ctx.restore();
-    }
-    
-    let shootingStars = [];
-
-    function createShootingStar() {
-      if (shootingStars.length >= 5) return;
-      
-      const startX = Math.random() * starCanvas.width;
-      const startY = 0;
-      
-      const angle = Math.PI / 4 + Math.random() * Math.PI / 4;
-      const length = 100 + Math.random() * 150;
-      
-      const speed = 5 + Math.random() * 10;
-      
-      const colors = ['#ffffff', '#aaaaff', '#ffaaaa', '#aaffaa'];
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      
-      shootingStars.push({
-        x: startX,
-        y: startY,
-        angle,
-        length,
-        speed,
-        color,
-        progress: 0,
-        opacity: 1
-      });
-    }
-
-    function updateShootingStars() {
-      shootingStars = shootingStars.filter(star => {
-        star.progress += star.speed / 100;
-        
-        if (star.progress >= 1) return false;
-        
-        drawShootingStar(star);
-        return true;
-      });
-    }
-
-    function drawShootingStar(star) {
-      ctx.save();
-      
-      const endX = star.x + Math.cos(star.angle) * star.length;
-      const endY = star.y + Math.sin(star.angle) * star.length;
-      
-      const currentX = star.x + Math.cos(star.angle) * star.length * star.progress;
-      const currentY = star.y + Math.sin(star.angle) * star.length * star.progress;
-      
-      const gradient = ctx.createLinearGradient(
-        currentX, currentY,
-        currentX - Math.cos(star.angle) * 30, 
-        currentY - Math.sin(star.angle) * 30
-      );
-      
-      gradient.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
-      gradient.addColorStop(0.1, `rgba(${hexToRgb(star.color)}, 0.7)`);
-      gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
-      
-      ctx.beginPath();
-      ctx.moveTo(currentX, currentY);
-      ctx.lineTo(
-        currentX - Math.cos(star.angle) * 30, 
-        currentY - Math.sin(star.angle) * 30
-      );
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = gradient;
-      ctx.stroke();
-      
-      ctx.beginPath();
-      ctx.arc(currentX, currentY, 2, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-      ctx.fill(); 
-      ctx.restore();
-    }
-
-    function hexToRgb(hex) {
-      hex = hex.replace('#', '');
-      
-      const r = parseInt(hex.substring(0, 2), 16);
-      const g = parseInt(hex.substring(2, 4), 16);
-      const b = parseInt(hex.substring(4, 6), 16);
-      
-      return `${r}, ${g}, ${b}`;
-    }
-    
-    let hoveredStar = null;
-    
-    starCanvas.addEventListener('mousemove', function(e) {
-      const rect = starCanvas.getBoundingClientRect();
-      const mouseX = e.clientX - rect.left;
-      const mouseY = e.clientY - rect.top;
-      
-      hoveredStar = null;
-      starCanvas.style.cursor = 'default';
-      
-      for (let i = 0; i < stars.length; i++) {
-        const star = stars[i];
-        const dx = mouseX - star.x;
-        const dy = mouseY - star.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        
-        if (distance <= star.size * 4) {
-          hoveredStar = star;
-          starCanvas.style.cursor = 'pointer';
-          break;
-        }
-      }
-    });
-    
-    starCanvas.addEventListener('click', function(e) {
-      if (hoveredStar) {
-        console.log('Clicked on star:', hoveredStar.emotionData);
-      }
-    });
-    
-    function drawStarInfo() {
-      if (!hoveredStar) return;
-      
-      const star = hoveredStar;
-      const data = star.emotionData;
-      
-      const date = new Date(data.timestamp);
-      const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
-      const formattedTime = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
-      
-      const text = `${data.name} (Intensity: ${data.intensity})
-${formattedDate} ${formattedTime}`;
-      
-      ctx.save();
-      
-      ctx.font = '14px Inter, sans-serif';
-      const textLines = text.split('\n');
-      const textWidth = Math.max(...textLines.map(line => ctx.measureText(line).width));
-      const boxWidth = textWidth + 20;
-      const boxHeight = textLines.length * 20 + 10;
-      
-      let boxX = star.x + 20;
-      let boxY = star.y - boxHeight - 10;
-      
-      if (boxX + boxWidth > starCanvas.width) {
-        boxX = star.x - boxWidth - 20;
-      }
-      
-      if (boxY < 0) {
-        boxY = star.y + 20;
-      }
-      
-      const bgGradient = ctx.createLinearGradient(boxX, boxY, boxX + boxWidth, boxY + boxHeight);
-      bgGradient.addColorStop(0, 'rgba(30, 30, 60, 0.9)');
-      bgGradient.addColorStop(1, 'rgba(20, 20, 40, 0.9)');
-      
-      ctx.fillStyle = bgGradient;
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-      ctx.shadowBlur = 10;
-      ctx.shadowOffsetX = 2;
-      ctx.shadowOffsetY = 2;
-      
-      ctx.beginPath();
-      ctx.roundRect(boxX, boxY, boxWidth, boxHeight, 8);
-      ctx.fill();
-      
-      ctx.strokeStyle = star.color;
-      ctx.lineWidth = 2;
-      ctx.shadowBlur = 0;
-      ctx.shadowOffsetX = 0;
-      ctx.shadowOffsetY = 0;
-      ctx.stroke();
-      
-      ctx.fillStyle = '#fff';
-      ctx.textAlign = 'left';
-      ctx.textBaseline = 'top';
-      
-      textLines.forEach((line, i) => {
-        ctx.fillText(line, boxX + 10, boxY + 10 + (i * 20));
-      });
-      
-      ctx.restore();
-    }
-    
-    function updateAnimation() {
-      animate();
-      
-      if (hoveredStar) {
-        drawStarInfo();
-      }
-      
-      animationFrame = requestAnimationFrame(updateAnimation);
-    }
-    
-    createStars();
-    createBackgroundStars();
-    updateAnimation();
-    
-    return function cleanup() {
-      if (animationFrame) {
-        cancelAnimationFrame(animationFrame);
-      }
-      window.removeEventListener('resize', resizeCanvas);
-    };
-  }
-
+  });
+  
   emotionForm.addEventListener('submit', function(e) {
     e.preventDefault();
     
@@ -795,30 +469,7 @@ ${formattedDate} ${formattedTime}`;
     intensityInput.value = 5;
     intensityValue.textContent = 5;
     
-    emotionModal.classList.remove('active');
-  });
-
-  zodiacSelect.addEventListener('change', function() {
-    const selectedZodiac = this.value;
-    if (selectedZodiac) {
-      showZodiacInfo(selectedZodiac);
-    } else {
-      zodiacInfo.style.display = 'none';
-    }
-  });
-
-  recordEmotionBtn.addEventListener('click', function() {
-    emotionModal.classList.add('active');
-  });
-
-  closeModal.addEventListener('click', function() {
-    emotionModal.classList.remove('active');
-  });
-
-  emotionModal.addEventListener('click', function(e) {
-    if (e.target === emotionModal) {
-      emotionModal.classList.remove('active');
-    }
+    closeModalAnimation(emotionModal);
   });
 
   async function loadZodiacData() {
@@ -933,12 +584,849 @@ ${formattedDate} ${formattedTime}`;
     
     return mapping[englishEmotion] || 'Happy';
   }
+
+  function initializeStarMap() {
+    const emotionHistory = loadEmotionHistory();
+    const ctx = starCanvas.getContext('2d');
+    
+    let stars = [];
+    let constellationLines = [];
+    let backgroundStars = [];
+    let animationFrame;
+    
+    // 添加拖动功能变量
+    let isDragging = false;
+    let dragStart = { x: 0, y: 0 };
+    let viewOffset = { x: 0, y: 0 };
+    let lastViewOffset = { x: 0, y: 0 };
+    let minScale = 0.5;
+    let maxScale = 2.0;
+    let currentScale = 1.0;
+    
+    const resizeCanvas = () => {
+      const container = starCanvas.parentElement;
+      starCanvas.width = container.offsetWidth;
+      starCanvas.height = container.offsetHeight;
+      
+      createStars();
+      createBackgroundStars();
+    };
+    
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    
+    // 添加触摸和鼠标事件监听器
+    function setupDragListeners() {
+      // 鼠标事件
+      starCanvas.addEventListener('mousedown', startDrag);
+      starCanvas.addEventListener('mousemove', drag);
+      starCanvas.addEventListener('mouseup', endDrag);
+      starCanvas.addEventListener('mouseleave', endDrag);
+      
+      // 触摸事件
+      starCanvas.addEventListener('touchstart', startDragTouch, { passive: false });
+      starCanvas.addEventListener('touchmove', dragTouch, { passive: false });
+      starCanvas.addEventListener('touchend', endDragTouch);
+      starCanvas.addEventListener('touchcancel', endDragTouch);
+    }
+    
+    function startDrag(e) {
+      isDragging = true;
+      dragStart.x = e.clientX;
+      dragStart.y = e.clientY;
+      lastViewOffset.x = viewOffset.x;
+      lastViewOffset.y = viewOffset.y;
+      starCanvas.style.cursor = 'grabbing';
+    }
+    
+    function drag(e) {
+      if (!isDragging) return;
+      
+      viewOffset.x = lastViewOffset.x + (e.clientX - dragStart.x) / currentScale;
+      viewOffset.y = lastViewOffset.y + (e.clientY - dragStart.y) / currentScale;
+      
+      const maxOffset = starCanvas.width / 2;
+      viewOffset.x = Math.max(Math.min(viewOffset.x, maxOffset), -maxOffset);
+      viewOffset.y = Math.max(Math.min(viewOffset.y, maxOffset), -maxOffset);
+    }
+    
+    function endDrag() {
+      isDragging = false;
+      starCanvas.style.cursor = 'default';
+    }
+    
+    function startDragTouch(e) {
+      if (e.touches.length === 1) {
+        e.preventDefault();
+        isDragging = true;
+        dragStart.x = e.touches[0].clientX;
+        dragStart.y = e.touches[0].clientY;
+        lastViewOffset.x = viewOffset.x;
+        lastViewOffset.y = viewOffset.y;
+      }
+    }
+    
+    function dragTouch(e) {
+      if (!isDragging || e.touches.length !== 1) return;
+      e.preventDefault();
+      
+      viewOffset.x = lastViewOffset.x + (e.touches[0].clientX - dragStart.x) / currentScale;
+      viewOffset.y = lastViewOffset.y + (e.touches[0].clientY - dragStart.y) / currentScale;
+      
+      const maxOffset = starCanvas.width / 2;
+      viewOffset.x = Math.max(Math.min(viewOffset.x, maxOffset), -maxOffset);
+      viewOffset.y = Math.max(Math.min(viewOffset.y, maxOffset), -maxOffset);
+    }
+    
+    function endDragTouch() {
+      isDragging = false;
+    }
+    
+    setupDragListeners();
+    
+    function createStars() {
+      stars = [];
+      
+      if (emotionHistory.length === 0) return;
+      
+      emotionHistory.forEach((emotion, index) => {
+        const emotionData = emotions.find(e => e.id === emotion.emotion);
+        if (!emotionData) return;
+        
+        const seedX = parseInt(emotion.id) % 10000;
+        const seedY = parseInt(emotion.id) / 10000;
+        
+        const angleOffset = index * (Math.PI * 0.7);
+        const distanceFromCenter = 50 + (emotion.intensity * 20);
+        
+        const x = (starCanvas.width / 2) + Math.cos(seedX + angleOffset) * distanceFromCenter;
+        const y = (starCanvas.height / 2) + Math.sin(seedY + angleOffset) * distanceFromCenter;
+        
+        const size = 2 + (emotion.intensity / 2);
+        
+        stars.push({
+          x,
+          y,
+          size,
+          color: emotionData.color,
+          points: 5 + Math.floor(Math.random() * 2),
+          rotation: Math.random() * Math.PI * 2,
+          phase: Math.random() * Math.PI * 2,
+          emotionData: {
+            id: emotion.id,
+            name: emotionData.name,
+            intensity: emotion.intensity,
+            timestamp: emotion.timestamp
+          }
+        });
+      });
+      
+      createConstellationLines();
+    }
+    
+    function drawConstellationLines() {
+      if (stars.length < 2 || !constellationLines || constellationLines.length === 0) {
+        createConstellationLines();
+        if (stars.length < 2 || !constellationLines || constellationLines.length === 0) {
+          return;
+        }
+      }
+      
+      constellationLines.forEach(line => {
+        if (!stars[line.from] || !stars[line.to]) return;
+        
+        const fromStar = stars[line.from];
+        const toStar = stars[line.to];
+        
+        const gradient = ctx.createLinearGradient(
+          fromStar.x, fromStar.y,
+          toStar.x, toStar.y
+        );
+        
+        gradient.addColorStop(0, adjustColorAlpha(fromStar.color, line.alpha));
+        gradient.addColorStop(1, adjustColorAlpha(toStar.color, line.alpha));
+        
+        ctx.beginPath();
+        ctx.moveTo(fromStar.x, fromStar.y);
+        ctx.lineTo(toStar.x, toStar.y);
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      });
+    }
+    
+    function createConstellationLines() {
+      constellationLines = [];
+      
+      if (stars.length < 2) return;
+      
+      stars.forEach((star, i) => {
+        const distances = [];
+        
+        for (let j = 0; j < stars.length; j++) {
+          if (i === j) continue;
+          
+          const otherStar = stars[j];
+          const dx = star.x - otherStar.x;
+          const dy = star.y - otherStar.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance < starCanvas.width / 4) {
+            distances.push({ index: j, distance });
+          }
+        }
+        
+        distances.sort((a, b) => a.distance - b.distance);
+        
+        const connectCount = 2 + Math.floor(Math.random() * 2);
+        for (let k = 0; k < Math.min(connectCount, distances.length); k++) {
+          const j = distances[k].index;
+          
+          const lineExists = constellationLines.some(line => 
+            (line.from === i && line.to === j) || (line.from === j && line.to === i)
+          );
+          
+          if (!lineExists) {
+            constellationLines.push({
+              from: i,
+              to: j,
+              alpha: 0.1 + Math.random() * 0.2
+            });
+          }
+        }
+      });
+      
+      if (constellationLines.length === 0 && stars.length >= 2) {
+        for (let i = 0; i < stars.length - 1; i++) {
+          constellationLines.push({
+            from: i,
+            to: i + 1,
+            alpha: 0.1 + Math.random() * 0.2
+          });
+        }
+      }
+    }
+    
+    function drawBackground() {
+      const centerX = starCanvas.width / 2 - viewOffset.x / currentScale;
+      const centerY = starCanvas.height / 2 - viewOffset.y / currentScale;
+      const radius = starCanvas.width * 0.7 / currentScale;
+      
+      const gradient = ctx.createRadialGradient(
+        centerX, centerY, 0,
+        centerX, centerY, radius
+      );
+      
+      gradient.addColorStop(0, 'rgba(25, 25, 50, 1)');
+      gradient.addColorStop(0.5, 'rgba(15, 15, 35, 1)');
+      gradient.addColorStop(1, 'rgba(5, 5, 20, 1)');
+      
+      ctx.fillStyle = gradient;
+      
+      const viewWidth = starCanvas.width / currentScale;
+      const viewHeight = starCanvas.height / currentScale;
+      const fillX = -viewOffset.x / currentScale;
+      const fillY = -viewOffset.y / currentScale;
+      
+      ctx.fillRect(fillX, fillY, viewWidth, viewHeight);
+      
+      for (let i = 0; i < 5; i++) {
+        const cloudX = centerX + (Math.random() - 0.5) * radius;
+        const cloudY = centerY + (Math.random() - 0.5) * radius;
+        const cloudSize = radius * 0.3;
+        
+        const cloudGradient = ctx.createRadialGradient(
+          cloudX, cloudY, 0,
+          cloudX, cloudY, cloudSize
+        );
+        
+        const hue = Math.random() * 60;
+        const saturation = 30 + Math.random() * 30;
+        const lightness = 5 + Math.random() * 10;
+        
+        cloudGradient.addColorStop(0, `hsla(${hue}, ${saturation}%, ${lightness}%, 0.1)`);
+        cloudGradient.addColorStop(1, 'transparent');
+        
+        ctx.fillStyle = cloudGradient;
+        ctx.fillRect(fillX, fillY, viewWidth, viewHeight);
+      }
+    }
+    
+    function createBackgroundStars() {
+      backgroundStars = [];
+      const starCount = Math.floor(starCanvas.width * starCanvas.height / 500);
+      
+      const margin = Math.max(starCanvas.width, starCanvas.height);
+      
+      for (let i = 0; i < starCount; i++) {
+        backgroundStars.push({
+          x: (Math.random() * (starCanvas.width + 2 * margin)) - margin,
+          y: (Math.random() * (starCanvas.height + 2 * margin)) - margin,
+          size: 0.1 + Math.random() * 1,
+          alpha: 0.1 + Math.random() * 0.6,
+          pulse: 0.5 + Math.random() * 0.5,
+          phase: Math.random() * Math.PI * 2
+        });
+      }
+    }
+    
+    function drawBackgroundStars() {
+      backgroundStars.forEach(star => {
+        star.phase += 0.01;
+        
+        const alpha = star.alpha * (0.5 + Math.sin(star.phase) * 0.5 * star.pulse);
+        
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+        ctx.fill();
+      });
+    }
+    
+    function adjustColorAlpha(color, alpha) {
+      if (color.startsWith('#')) {
+        const r = parseInt(color.substr(1, 2), 16);
+        const g = parseInt(color.substr(3, 2), 16);
+        const b = parseInt(color.substr(5, 2), 16);
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      }
+      return color;
+    }
+    
+    function drawStar(star) {
+      ctx.save();
+      
+      star.phase += 0.01;
+      
+      ctx.translate(star.x, star.y);
+      
+      ctx.rotate(star.rotation + Math.sin(star.phase * 0.2) * 0.05);
+      
+      const scale = 1 + Math.sin(star.phase) * 0.1;
+      ctx.scale(scale, scale);
+      
+      const points = star.points;
+      const outerRadius = star.size;
+      const innerRadius = star.size * 0.4;
+      
+      const gradient = ctx.createRadialGradient(0, 0, innerRadius, 0, 0, outerRadius * 3);
+      gradient.addColorStop(0, adjustColorAlpha(star.color, 0.8));
+      gradient.addColorStop(0.5, adjustColorAlpha(star.color, 0.2));
+      gradient.addColorStop(1, 'transparent');
+      
+      ctx.beginPath();
+      ctx.arc(0, 0, outerRadius * 3, 0, Math.PI * 2);
+      ctx.fillStyle = gradient;
+      ctx.fill();
+      
+      ctx.beginPath();
+      for (let i = 0; i < points * 2; i++) {
+        const radius = i % 2 === 0 ? outerRadius : innerRadius;
+        const angle = (i * Math.PI) / points;
+        
+        if (i === 0) {
+          ctx.moveTo(Math.cos(angle) * radius, Math.sin(angle) * radius);
+        } else {
+          ctx.lineTo(Math.cos(angle) * radius, Math.sin(angle) * radius);
+        }
+      }
+      
+      ctx.closePath();
+      ctx.fillStyle = star.color;
+      ctx.fill();
+      
+      ctx.restore();
+    }
+    
+    let shootingStars = [];
+    let hoveredStar = null;
+
+    function createShootingStar() {
+      if (shootingStars.length >= 5) return;
+      
+      const startX = Math.random() * starCanvas.width;
+      const startY = 0;
+      
+      const angle = Math.PI / 4 + Math.random() * Math.PI / 4;
+      const length = 100 + Math.random() * 150;
+      
+      const speed = 5 + Math.random() * 10;
+      
+      const colors = ['#ffffff', '#aaaaff', '#ffaaaa', '#aaffaa'];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      
+      shootingStars.push({
+        x: startX,
+        y: startY,
+        angle,
+        length,
+        speed,
+        color,
+        progress: 0,
+        opacity: 1
+      });
+    }
+
+    function updateShootingStars() {
+      shootingStars = shootingStars.filter(star => {
+        star.progress += star.speed / 100;
+        
+        if (star.progress >= 1) return false;
+        
+        drawShootingStar(star);
+        return true;
+      });
+    }
+
+    function drawShootingStar(star) {
+      ctx.save();
+      
+      const endX = star.x + Math.cos(star.angle) * star.length;
+      const endY = star.y + Math.sin(star.angle) * star.length;
+      
+      const currentX = star.x + Math.cos(star.angle) * star.length * star.progress;
+      const currentY = star.y + Math.sin(star.angle) * star.length * star.progress;
+      
+      const gradient = ctx.createLinearGradient(
+        currentX, currentY,
+        currentX - Math.cos(star.angle) * 30, 
+        currentY - Math.sin(star.angle) * 30
+      );
+      
+      gradient.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+      gradient.addColorStop(0.1, `rgba(${hexToRgb(star.color)}, 0.7)`);
+      gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      
+      ctx.beginPath();
+      ctx.moveTo(currentX, currentY);
+      ctx.lineTo(
+        currentX - Math.cos(star.angle) * 30, 
+        currentY - Math.sin(star.angle) * 30
+      );
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = gradient;
+      ctx.stroke();
+      
+      ctx.beginPath();
+      ctx.arc(currentX, currentY, 2, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      ctx.fill();
+      
+      ctx.restore();
+    }
+
+    function hexToRgb(hex) {
+      hex = hex.replace('#', '');
+      
+      const r = parseInt(hex.substring(0, 2), 16);
+      const g = parseInt(hex.substring(2, 4), 16);
+      const b = parseInt(hex.substring(4, 6), 16);
+      
+      return `${r}, ${g}, ${b}`;
+    }
+    
+    function animate() {
+      ctx.clearRect(0, 0, starCanvas.width, starCanvas.height);
+      
+      ctx.fillStyle = 'rgba(5, 5, 20, 1)';
+      ctx.fillRect(0, 0, starCanvas.width, starCanvas.height);
+      
+      ctx.save();
+      
+      ctx.translate(viewOffset.x, viewOffset.y);
+      ctx.scale(currentScale, currentScale);
+      
+      drawBackground();
+      
+      drawBackgroundStars();
+      
+      if (emotionHistory.length === 0) {
+        ctx.font = '18px Inter, sans-serif';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.textAlign = 'center';
+        ctx.fillText('Record your first emotion to create your star map', 
+                    (starCanvas.width / 2 - viewOffset.x) / currentScale, 
+                    (starCanvas.height / 2 - viewOffset.y) / currentScale);
+        ctx.restore();
+        animationFrame = requestAnimationFrame(animate);
+        return;
+      }
+      
+      drawConstellationLines();
+      stars.forEach(star => drawStar(star));
+      
+      if (Math.random() < 0.01) {
+        createShootingStar();
+      }
+      
+      updateShootingStars();
+    
+      ctx.restore();
+      
+      if (window.innerWidth <= 375) {
+        drawDragIndicator();
+      }
+      
+      animationFrame = requestAnimationFrame(animate);
+    }
+    
+    function drawDragIndicator() {
+      ctx.save();
+      ctx.globalAlpha = 0.7;
+      ctx.font = '12px Inter, sans-serif';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+      ctx.textAlign = 'center';
+      ctx.fillText('拖动查看更多星星', starCanvas.width / 2, starCanvas.height - 20);
+      ctx.restore();
+    }
+
+    starCanvas.addEventListener('mousemove', function(e) {
+      if (isDragging) return;
+      
+      const rect = starCanvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+      
+      const adjustedX = (mouseX - viewOffset.x) / currentScale;
+      const adjustedY = (mouseY - viewOffset.y) / currentScale;
+      
+      hoveredStar = null;
+      starCanvas.style.cursor = 'default';
+      
+      for (let i = 0; i < stars.length; i++) {
+        const star = stars[i];
+        const dx = adjustedX - star.x;
+        const dy = adjustedY - star.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance <= star.size * 4) {
+          hoveredStar = star;
+          starCanvas.style.cursor = 'pointer';
+          break;
+        }
+      }
+    });
+    
+    starCanvas.addEventListener('click', function(e) {
+      if (isDragging) return;
+      
+      if (hoveredStar) {
+        console.log('Clicked on star:', hoveredStar.emotionData);
+      }
+    });
+    
+    function drawStarInfo() {
+      if (!hoveredStar) return;
+      
+      ctx.save();
+      
+      ctx.translate(viewOffset.x, viewOffset.y);
+      ctx.scale(currentScale, currentScale);
+      
+      const star = hoveredStar;
+      const data = star.emotionData;
+      
+      const date = new Date(data.timestamp);
+      const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+      const formattedTime = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+      
+      const text = `${data.name} (Intensity: ${data.intensity})
+${formattedDate} ${formattedTime}`;
+      
+      ctx.font = '14px Inter, sans-serif';
+      const textLines = text.split('\n');
+      const textWidth = Math.max(...textLines.map(line => ctx.measureText(line).width));
+      const boxWidth = textWidth + 20;
+      const boxHeight = textLines.length * 20 + 10;
+      
+      let boxX = star.x + 20;
+      let boxY = star.y - boxHeight - 10;
+      
+      const effectiveWidth = starCanvas.width / currentScale;
+      const effectiveHeight = starCanvas.height / currentScale;
+      
+      if (boxX + boxWidth > effectiveWidth) {
+        boxX = star.x - boxWidth - 20;
+      }
+      
+      if (boxY < 0) {
+        boxY = star.y + 20;
+      }
+      
+      const bgGradient = ctx.createLinearGradient(boxX, boxY, boxX + boxWidth, boxY + boxHeight);
+      bgGradient.addColorStop(0, 'rgba(30, 30, 60, 0.9)');
+      bgGradient.addColorStop(1, 'rgba(20, 20, 40, 0.9)');
+      
+      ctx.fillStyle = bgGradient;
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+      ctx.shadowBlur = 10;
+      ctx.shadowOffsetX = 2;
+      ctx.shadowOffsetY = 2;
+      
+      ctx.beginPath();
+      ctx.roundRect(boxX, boxY, boxWidth, boxHeight, 8);
+      ctx.fill();
+      
+      ctx.strokeStyle = star.color;
+      ctx.lineWidth = 2;
+      ctx.shadowBlur = 0;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+      ctx.stroke();
+      
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      
+      textLines.forEach((line, i) => {
+        ctx.fillText(line, boxX + 10, boxY + 10 + (i * 20));
+      });
+      
+      ctx.restore();
+    }
+    
+    function updateAnimation() {
+      animate();
+      
+      if (hoveredStar) {
+        drawStarInfo();
+      }
+      
+      animationFrame = requestAnimationFrame(updateAnimation);
+    }
+    
+    let initialPinchDistance = 0;
+    
+    starCanvas.addEventListener('touchstart', function(e) {
+      if (e.touches.length === 2) {
+        e.preventDefault();
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        initialPinchDistance = Math.sqrt(dx * dx + dy * dy);
+      }
+    }, { passive: false });
+    
+    starCanvas.addEventListener('touchmove', function(e) {
+      if (e.touches.length === 2) {
+        e.preventDefault();
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const pinchDistance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (initialPinchDistance > 0) {
+          const scaleFactor = pinchDistance / initialPinchDistance;
+          let newScale = currentScale * scaleFactor;
+          
+          newScale = Math.max(minScale, Math.min(newScale, maxScale));
+          
+          const centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+          const centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+          
+          const rect = starCanvas.getBoundingClientRect();
+          const canvasCenterX = centerX - rect.left;
+          const canvasCenterY = centerY - rect.top;
+          
+          viewOffset.x = canvasCenterX - (canvasCenterX - viewOffset.x) * (newScale / currentScale);
+          viewOffset.y = canvasCenterY - (canvasCenterY - viewOffset.y) * (newScale / currentScale);
+          
+          currentScale = newScale;
+          initialPinchDistance = pinchDistance;
+        }
+      }
+    }, { passive: false });
+    
+    starCanvas.addEventListener('touchend', function(e) {
+      if (e.touches.length < 2) {
+        initialPinchDistance = 0;
+      }
+    });
+    
+    starCanvas.addEventListener('wheel', function(e) {
+      e.preventDefault();
+      
+      const scaleFactor = e.deltaY > 0 ? 0.9 : 1.1;
+      let newScale = currentScale * scaleFactor;
+      
+      newScale = Math.max(minScale, Math.min(newScale, maxScale));
+      
+      const rect = starCanvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+      
+      viewOffset.x = mouseX - (mouseX - viewOffset.x) * (newScale / currentScale);
+      viewOffset.y = mouseY - (mouseY - viewOffset.y) * (newScale / currentScale);
+      
+      currentScale = newScale;
+    }, { passive: false });
+    
+    createStars();
+    createBackgroundStars();
+    updateAnimation();
+    
+    return function cleanup() {
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+      }
+      window.removeEventListener('resize', resizeCanvas);
+      
+      starCanvas.removeEventListener('mousedown', startDrag);
+      starCanvas.removeEventListener('mousemove', drag);
+      starCanvas.removeEventListener('mouseup', endDrag);
+      starCanvas.removeEventListener('mouseleave', endDrag);
+      starCanvas.removeEventListener('touchstart', startDragTouch);
+      starCanvas.removeEventListener('touchmove', dragTouch);
+      starCanvas.removeEventListener('touchend', endDragTouch);
+      starCanvas.removeEventListener('touchcancel', endDragTouch);
+    };
+  }
+
+  loadZodiacData();
+  populateEmotionGrid();
+  populateZodiacSelect();
+  renderEmotionHistory();
+  initializeStarMap();
+
+  function ensureMenuButtonClickable() {
+    if (window.innerWidth <= 375) {
+      mobileMenuBtn.style.zIndex = '100';
+      
+      mobileMenuBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleMobileMenu(true);
+        console.log('Mobile menu button clicked - reattached');
+      }, true);
+    }
+  }
   
-  zodiacSelect.addEventListener('change', function() {
-    userZodiac = this.value;
-    localStorage.setItem('userZodiac', userZodiac);
-    updateZodiacInfo(userZodiac);
-  });
+  ensureMenuButtonClickable();
+  window.addEventListener('resize', ensureMenuButtonClickable);
+
+  function fixMobileMenuButton() {
+    if (window.innerWidth <= 375) {
+      mobileMenuBtn.style.zIndex = '999';
+      mobileMenuBtn.style.display = 'flex';
+      mobileMenuBtn.style.position = 'relative';
+      
+      console.log("Fixing mobile menu button");
+      
+      mobileMenuBtn.removeEventListener('click', handleMenuClick);
+      mobileMenuBtn.addEventListener('click', handleMenuClick, true);
+      
+      mobileMenuBtn.setAttribute('onclick', "this.classList.add('clicked'); setTimeout(() => this.classList.remove('clicked'), 300);");
+    }
+  }
+  
+  function handleMenuClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('Menu clicked - handler');
+    toggleMobileMenu(true);
+  }
+  
+  fixMobileMenuButton();
+  
+  window.addEventListener('load', fixMobileMenuButton);
+  
+  mobileMenuBtn.oncontextmenu = function(e) {
+    e.preventDefault();
+    return false;
+  };
+
+  function fixMenuCloseIssues() {
+    const closeBtn = document.getElementById('close-side-panel');
+    if (closeBtn) {
+      closeBtn.removeEventListener('click', handleCloseMenu);
+      closeBtn.addEventListener('click', handleCloseMenu, false);
+      closeBtn.setAttribute('onclick', 'document.querySelector(".side-panel").classList.remove("active"); document.body.style.overflow = "";');
+      
+      closeBtn.style.zIndex = '999';
+      closeBtn.style.display = 'flex';
+      closeBtn.style.cursor = 'pointer';
+    }
+    
+    document.querySelectorAll('.side-panel a, .side-panel button:not(#close-side-panel)').forEach(item => {
+      item.addEventListener('click', function() {
+        toggleMobileMenu(false);
+      });
+    });
+    
+    document.addEventListener('click', function(e) {
+      if (sidePanel.classList.contains('active') && 
+          !sidePanel.contains(e.target) && 
+          e.target !== mobileMenuBtn && 
+          !mobileMenuBtn.contains(e.target)) {
+        toggleMobileMenu(false);
+      }
+    });
+    
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && sidePanel.classList.contains('active')) {
+        toggleMobileMenu(false);
+      }
+    });
+  }
+  
+  function handleCloseMenu(e) {
+    console.log('Close menu button clicked');
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    toggleMobileMenu(false);
+  }
+  
+  fixMenuCloseIssues();
+  window.addEventListener('load', fixMenuCloseIssues);
+  
+  function addEmergencyCloseButton() {
+    const closeBtn = document.getElementById('close-side-panel');
+    if (closeBtn) {
+      closeBtn.style.zIndex = '9999';
+      closeBtn.style.display = 'flex';
+      closeBtn.style.position = 'absolute';
+      closeBtn.style.cursor = 'pointer';
+      
+      closeBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleMobileMenu(false);
+      }, true);
+      
+      closeBtn.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        toggleMobileMenu(false);
+      }, {passive: false});
+    }
+  }
+  
+  addEmergencyCloseButton();
+
+  let touchStartX = 0;
+  let touchEndX = 0;
+  
+  sidePanel.addEventListener('touchstart', function(e) {
+    touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
+  
+  sidePanel.addEventListener('touchend', function(e) {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+  }, { passive: true });
+  
+  function handleSwipe() {
+    if (touchEndX < touchStartX && Math.abs(touchEndX - touchStartX) > 50) {
+      toggleMobileMenu(false);
+    }
+  }
+  
+  if (window.innerWidth <= 375) {
+    document.querySelectorAll('.side-panel .panel-card').forEach(card => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(20px)';
+      card.style.transition = 'all 0.4s ease';
+    });
+  }
   
   saveZodiacBtn.addEventListener('click', function() {
     userZodiac = initialZodiacSelect.value;
@@ -949,15 +1437,77 @@ ${formattedDate} ${formattedTime}`;
     
     localStorage.setItem('userZodiac', userZodiac);
     zodiacSelect.value = userZodiac;
+    
+    const zodiacMobileSelect = document.getElementById('zodiac-mobile-select');
+    if (zodiacMobileSelect) {
+      zodiacMobileSelect.value = userZodiac;
+    }
+    
     updateZodiacInfo(userZodiac);
-    initialZodiacModal.classList.remove('active');
+    closeModalAnimation(initialZodiacModal);
     showToast('Zodiac setting successful!', 'success');
   });
+  
+  zodiacSelect.addEventListener('change', function() {
+    userZodiac = this.value;
+    localStorage.setItem('userZodiac', userZodiac);
+    
+    const zodiacMobileSelect = document.getElementById('zodiac-mobile-select');
+    if (zodiacMobileSelect) {
+      zodiacMobileSelect.value = userZodiac;
+    }
+    
+    updateZodiacInfo(userZodiac);
+  });
+  
+  function deleteEmotion(id) {
+    let emotions = loadEmotionHistory();
+    emotions = emotions.filter(e => e.id !== id);
+    saveEmotions(emotions);
+    renderEmotionHistory();
+    initializeStarMap();
+    showToast('Record deleted', 'info');
+  }
+  
+  function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    toast.className = `toast ${type}`;
+    
+    let icon = '';
+    switch(type) {
+      case 'success': icon = '<i class="fas fa-check-circle"></i> '; break;
+      case 'error': icon = '<i class="fas fa-exclamation-circle"></i> '; break;
+      case 'warning': icon = '<i class="fas fa-exclamation-triangle"></i> '; break;
+      case 'info': icon = '<i class="fas fa-info-circle"></i> '; break;
+    }
+    
+    toast.innerHTML = `${icon}${message}`;
+    toast.classList.add('visible');
+    
+    setTimeout(() => {
+      toast.classList.remove('visible');
+    }, 3000);
+  }
 
-  loadZodiacData();
-
-  populateEmotionGrid();
-  populateZodiacSelect();
-  renderEmotionHistory();
-  initializeStarMap();
+  function ensureCloseBtnVisibility() {
+    const closeBtn = document.getElementById('close-side-panel');
+    if (closeBtn) {
+      if (window.innerWidth <= 375) {
+        closeBtn.style.display = 'flex';
+        
+        closeBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          sidePanel.classList.remove('active');
+          document.body.style.overflow = '';
+          console.log('Close panel button clicked (mobile)');
+        }, true);
+      } else {
+        closeBtn.style.display = 'none';
+      }
+    }
+  }
+  
+  ensureCloseBtnVisibility();
+  window.addEventListener('resize', ensureCloseBtnVisibility);
 });
