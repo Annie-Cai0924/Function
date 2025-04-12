@@ -111,9 +111,12 @@ document.addEventListener('DOMContentLoaded', function() {
   dateInput.max = formattedDate;
 
 
-
+ //This is used to control the display and hiding of the side menu. 
+//You just call it, such as toggleMobileMenu(true) to show, toggleMobileMenu(false) to hide.
   function toggleMobileMenu(show) {
+    //If pass in true, that means the user wants to open the menu
     if (show) {
+      //This will give.side-panel an active class name, which in CSS would normally make the sidebar slide out
       sidePanel.classList.add('active');
       document.body.style.overflow = 'hidden';
       
