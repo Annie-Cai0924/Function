@@ -7,8 +7,8 @@
     <title>Star Sky Emotion Tracker | Enterprise Zodiac Emotion Management Platform</title>
     <link rel="stylesheet" href="assets/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="assets/main.js"></script>
 </head>
+
 <body>
     <div class="app-wrapper">
         <div class="star-map-container">
@@ -25,11 +25,17 @@
                     <option value="">Select Zodiac Sign</option>
                 </select>
                 <button id="record-emotion-btn" class="record-btn">
-                    <i class="fas fa-plus"></i> Record Emotion
+                    <i class="fas fa-plus"></i> <span class="btn-text">Add</span>
+                </button>
+                <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Open Menu">
+                    <i class="fas fa-bars"></i>
                 </button>
             </div>
         </div>
         <div class="side-panel">
+            <button id="close-side-panel" class="close-side-panel" aria-label="关闭菜单">
+                <i class="fas fa-times"></i>
+            </button>
             <div class="panel-card">
                 <div class="panel-header">
                     <div class="panel-title"><i class="fas fa-star"></i> Today's Zodiac Advice</div>
@@ -64,8 +70,6 @@
                     <div class="modal-title">Record Today's Emotion</div>
                     <button class="close-modal" id="close-modal">×</button>
                 </div>
-
-
                 <div class="modal-body">
                     <form id="emotion-form">
                         <div class="form-group">
@@ -90,6 +94,11 @@
                 </div>
             </div>
         </div>
+        <div class="mobile-fab">
+            <button id="mobile-record-btn" class="record-btn">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
     </div>
     <div id="toast" class="toast"></div>
     <div id="initial-zodiac-modal" class="modal-overlay active">
@@ -108,6 +117,7 @@
             </div>
         </div>
     </div>
+    <script src="assets/main.js"></script>
 </body>
 
 </html>
