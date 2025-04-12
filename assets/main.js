@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // store daily advice data for each zodiac sig but when it is a empty it will be initialized
   const dailyAdviceData = {};
   
+  //The function of this array is that when the front end shows the user to choose emotions, it can get "what name to show", "what color to use", "what expression to match" directly from here. And then I can use these colors or ICONS to visualize the emotional record, like drawing charts or pointing stars. 
+ 
+//My inspiration for this design also comes from the application of emotion tracking, which emphasizes the graphical expression of emotions, which I think is more intuitive and cute for users.
   //make a pop window of emotions that the user can choose 
   //Every emoji will be a star dispaly on the canvas
   const emotions = [
@@ -19,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
     { id: 'grateful', name: 'Grateful', color: '#32CD32', icon: '🙏' }
   ];
 
+  //I wrote this paragraph to store basic information about each sign. Each constellation is a small object, consisting of four things
   //It's what I use to keep all the basic data on the constellations. Every constellation is an object
 
   //Define the data of 12horoscopes
@@ -43,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
   //My friend told me to refer to the basic DOM manipulation methods, such as using document.getElementById() to select a specific ID in HTML, so that I can use JavaScript to control these elements, such as displaying a pop-up window, updating the value of the slider, Or automatically fill in today's date.
 
   //when user click on an emotion and it highlights; You drag the slider, it will show the strength value in real time; When you select a constellation, it will be saved and can be used the next time you open the page. This is also the basis for the smooth operation of the entire constellation mood tracking project.
-  
+
   //Get the data from html
   //display the emotion options
   const emotionGrid = document.getElementById('emotion-grid');
