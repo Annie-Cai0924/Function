@@ -158,15 +158,24 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
 
-  
+
   function closeMenuIfMobile() {
-    if (window.innerWidth <= 375 && sidePanel.classList.contains('active')) {
+    //If it's on your phone and the menu is open, turn the menu off
+
+    //If the window width is less than or equal to 375 pixels, the user is on the mobile size
+    if (window.innerWidth <= 375 && 
+    //if the side menu is now open
+      sidePanel.classList.contains('active')) 
+      {
+        //If both of these conditions are met, call toggleMobileMenu(false) and put the menu away
       toggleMobileMenu(false);
     }
   }
   
   function openModal(modal) {
+    //This is a general popup function, which one of the modal pop-ups you send in, it helps you open which one.
     closeMenuIfMobile();
+    //Start by executing closeMenuIfMobile() above, making sure to close the menu first if it is open
     modal.classList.add('active');
     
     setTimeout(() => {
