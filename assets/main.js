@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function() {
     closeMenuIfMobile();
     //Start by executing closeMenuIfMobile() above, making sure to close the menu first if it is open
     modal.classList.add('active');
-    
+    //Add the active class within the popup, which will normally opacity the popup in CSS (for example: display: block or opacity: 1)
     setTimeout(() => {
       if (modal.querySelector('.modal')) {
         modal.querySelector('.modal').style.transform = 'translateY(0) scale(1)';
@@ -186,25 +186,41 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 10);
   }
   
+//Learn it from GPT,but wrote it from claude
+
   function closeModalAnimation(modal) {
+    //This means finding the real white box inside the popup (usually the.modal layer)
     if (modal.querySelector('.modal')) {
+    //Move down 30px and zoom out a little bit (to 95%)
       modal.querySelector('.modal').style.transform = 'translateY(30px) scale(0.95)';
+    //Let it slowly become transparent
       modal.querySelector('.modal').style.opacity = '0';
     }
     
+
+    //This is written because the popup has been added to the closing animation effect (such as letting it slowly fade, slide, shrink), and these animations need time to play out. 
+ 
+//So I don't want it to be hidden or removed all at once, so the user can't see the animation.
+    //Wait 300 milliseconds (0.3 seconds) before removing the.active class name from the popup
     setTimeout(() => {
       modal.classList.remove('active');
     }, 300);
   }
   
+  //When the user clicks on that mobileMenuBtn, I'm going to execute a piece of code that adds a listener to the button to see if the user clicks on it
   mobileMenuBtn.addEventListener('click', function(e) {
+    //Default behavior to block this click event
     e.preventDefault();
+    //This event stays in this button and does not trigger other click events in the outer container (for example, some pages will click on the blank to close the menu, I don't want to accidentally close the menu by clicking the menu button)
     e.stopPropagation();
+    //Open the mobile side menu this function was written before, right? true indicates to display menu. It adds.active class names, animates, prevents scrolling, and so on.
     toggleMobileMenu(true);
     
     console.log('Mobile menu button clicked');
   }, true);
   
+  //Click the "Close button" to immediately close the sidebar and block any events from interfering.
+  //When the 'Close sidebar' button is clicked, this function is executed
   closeSidePanel.addEventListener('click', function(e) {
     e.preventDefault();
     e.stopPropagation();
