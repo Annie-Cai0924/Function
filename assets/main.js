@@ -226,16 +226,20 @@ document.addEventListener('DOMContentLoaded', function() {
     e.stopPropagation();
     toggleMobileMenu(false);
   }, true);
-  
+  //When the user clicks on the content area of the sidebar, do not let the click event continue to circulate
+  //I added this because sometimes when you click somewhere on the entire page, the page may do some global processing (such as clicking on an empty space to close the menu). 
+//But the user clicks on the sidebar content and doesn't want to miss the "click to close" logic by clicking inside the menu
   sidePanel.addEventListener('click', function(e) {
     e.stopPropagation();
   }, true);
   
+  //Find the element whose class is mobile-menu-tooltip from the page and save it to the variable menuTooltip
   const menuTooltip = document.querySelector('.mobile-menu-tooltip');
   if (menuTooltip) {
     menuTooltip.style.display = 'none';
   }
   
+  //This code is the "drop menu" when you're doing mobile interaction
   document.addEventListener('click', function(e) {
     if (window.innerWidth <= 375 && 
         sidePanel.classList.contains('active') &&
@@ -246,11 +250,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
   
+  //This code is the "drop menu" when you're doing mobile interaction
+  //If you're on a phone and the menu is open and you click somewhere on the screen other than the menu and the menu button - the menu will close automatically
   mobileRecordBtn.addEventListener('click', function() {
     closeMenuIfMobile();
     openModal(emotionModal);
   });
 
+//Used to automatically handle sidebar status based on screen width
   function handleResponsiveLayout() {
     if (window.innerWidth <= 375) {
       if (sidePanel.classList.contains('active') && window.innerWidth > 375) {
@@ -258,19 +265,22 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.style.overflow = '';
       }
       
+  //Style the star map container and resize the star map canvas if needed
       const starContainer = document.querySelector('.star-map-container');
       if (starContainer) {
         starContainer.style.height = '100%';
         starContainer.style.width = '100%';
         starContainer.style.overflow = 'hidden';
       }
-      
+    
+   //   If the star canvas exists, resize it according to the current container or page size
       if (starCanvas) {
         resizeStarCanvas();
       }
     }
   }
 
+  //Adjust the width and height of the canvas itself according to the size of the canvas container to ensure that the stars drawn will not be stretched or deformed
   function resizeStarCanvas() {
     if (!starCanvas) return;
     
@@ -288,10 +298,13 @@ document.addEventListener('DOMContentLoaded', function() {
   handleResponsiveLayout();
   window.addEventListener('resize', handleResponsiveLayout);
 
+  //Every time the user clicks the slider, the value displayed next to it is updated in real time, letting the user know what the current setting is
   intensityInput.addEventListener('input', function() {
     intensityValue.textContent = this.value;
   });
 
+
+  
   function populateEmotionGrid() {
     emotionGrid.innerHTML = '';
     emotions.forEach(emotion => {
