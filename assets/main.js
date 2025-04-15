@@ -6,11 +6,14 @@ document.addEventListener('DOMContentLoaded', function() {
   // store daily advice data for each zodiac sig but when it is a empty it will be initialized
   const dailyAdviceData = {};
   
+
+  //Learn it fromhttps://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Working_with_objects and https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array
   //The function of this array is that when the front end shows the user to choose emotions, it can get "what name to show", "what color to use", "what expression to match" directly from here. And then I can use these colors or ICONS to visualize the emotional record, like drawing charts or pointing stars
  
   //my inspiration for this design also comes from the application of emotion tracking, which emphasizes the graphical expression of emotions, which I think is more intuitive and cute for users
   //make a pop window of emotions that the user can choose 
   //Every emoji will be a star dispaly on the canvas
+  //still learn it from https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array
   const emotions = [
     { id: 'happy', name: 'Happy', color: '#FFD700', icon: '😊' },
     { id: 'excited', name: 'Excited', color: '#FF4500', icon: '🤩' },
@@ -22,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
     { id: 'grateful', name: 'Grateful', color: '#32CD32', icon: '🙏' }
   ];
 
+
   //I wrote this paragraph to store basic information about each sign. Each constellation is a small object, consisting of four things
   //It's what I use to keep all the basic data on the constellations. Every constellation is an object
 
@@ -29,6 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
   //Name: horoscopes' name (to display)
   //Id: horoscopes's name
   //element: the four classic element
+  //https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
   const zodiacSigns = [
     { id: 'aries', name: 'Aries', period: 'March 21 - April 19', element: 'Fire' },
     { id: 'taurus', name: 'Taurus', period: 'April 20 - May 20', element: 'Earth' },
@@ -304,12 +309,21 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
 
-  
+
+  //Learn it from https://developer.mozilla.org/zh-CN
+
+  //Define a function populateEmotionGrid that renders all emotions into the sentiment selection area of the page
   function populateEmotionGrid() {
+    //Clear the mood selection area first to make sure you don't re-render or overlay old content
     emotionGrid.innerHTML = '';
+    //Each emotion object in the emotions array (such as Happy, Sad, etc.) is traversed
     emotions.forEach(emotion => {
+      //Create a new <div> element as a single mood card
       const emotionItem = document.createElement('div');
+      //Add the CSS class emotion-item to the card for easy styling
       emotionItem.className = 'emotion-item';
+      //.emotion-icon: Displays an emoji icon with the emotion's color as a background 
+//.emotion-name: The name of the emotion (such as "Happy")
       emotionItem.dataset.id = emotion.id;
       emotionItem.innerHTML = `
         <div class="emotion-icon" style="background-color: ${emotion.color}">
@@ -317,10 +331,13 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
         <div class="emotion-name">${emotion.name}</div>
       `;
+      //Add the generated emotion card to the emotionGrid container of the page
       emotionGrid.appendChild(emotionItem);
-
+//Add a click-event listener to each emotion card, which is triggered when the user clicks on the emotion
       emotionItem.addEventListener('click', function() {
+        //Remove the.selected style class from all cards first, making sure that only one emotion is selected
         document.querySelectorAll('.emotion-item').forEach(item => {
+          //Then add a.selected style class to the sentiment card that is currently being clicked to make it look selected
           item.classList.remove('selected');
         });
         this.classList.add('selected');
@@ -328,55 +345,66 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
+  //Dynamically generate and insert the 12 constellations drop-down selection box （web size)
+//I write the populateZodiacSelect() function so that the user can choose their own constellation. Whether you open a website on your computer or mobile phone, it will automatically generate the corresponding drop-down menu. If it is a phone, it will add a smaller screen version of the menu that is more suitable
+//This code mainly uses the most common DOM operations in JavaScript, such as createElement to create an HTML element and appendChild to add it to the page. This way I saw it on some MDN
+//from createElement、appendChild
   function populateZodiacSelect() {
+    //Loop through the array of zodiacSigns you defined, creating an <option> element for each constellation and adding it to the page
     zodiacSigns.forEach(sign => {
       const option = document.createElement('option');
       option.value = sign.id;
       option.textContent = sign.name;
       zodiacSelect.appendChild(option);
     });
-    
+    //Check if the current is a small screen (usually a mobile phone), and if so, create a mobile-specific constellation selection box
     if (window.innerWidth <= 375) {
       let zodiacMobileSelect = document.getElementById('zodiac-mobile-select');
       
       if (!zodiacMobileSelect) {
         const zodiacHeader = document.querySelector('.zodiac-header');
+        //Create a new <select> element and give it an ID and style class for mobile use
         zodiacMobileSelect = document.createElement('select');
         zodiacMobileSelect.id = 'zodiac-mobile-select';
         zodiacMobileSelect.className = 'form-control';
         zodiacMobileSelect.innerHTML = '<option value="">Select Zodiac Sign</option>';
         
+    //Iterate through the array of zodiacSigns, adding the constellation options to the drop-down menu
         zodiacSigns.forEach(sign => {
           const option = document.createElement('option');
           option.value = sign.id;
           option.textContent = sign.name;
           zodiacMobileSelect.appendChild(option);
         });
-        
+
+      //If the user has already selected a constellation, it is automatically selected and skipped
         if (userZodiac) {
           zodiacMobileSelect.value = userZodiac;
         }
-        
+        //Add an event listener to the drop-down menu that is triggered when the user selects a new constellation
         zodiacMobileSelect.addEventListener('change', function() {
           userZodiac = this.value;
           zodiacSelect.value = userZodiac;
+          //Save the user's selection to local storage
           localStorage.setItem('userZodiac', userZodiac);
+          //Update horoscope information
           updateZodiacInfo(userZodiac);
         });
-        
+        //Insert the new drop-down menu at the top of the.zodiac-header
         zodiacHeader.insertBefore(zodiacMobileSelect, zodiacHeader.firstChild);
       }
     }
   }
-
+// show the zodiac name in the list
   function showZodiacInfo(zodiacId) {
     const sign = zodiacSigns.find(sign => sign.id === zodiacId);
+    //If it don't find it, just jump out of the function to prevent subsequent errors
     if (!sign) return;
-
+//Fill in the name of the constellation, the time period, and the four elements as shown on the page
     zodiacTitle.textContent = sign.name;
     zodiacPeriod.textContent = sign.period;
     zodiacElement.textContent = sign.element;
-    
+    //An asynchronous function getZodiacMessage is invoked to get hints or suggestions related to the constellation. After getting the message, fill in the position of the zodiacMessage in the page. And then let that part show
     getZodiacMessage(sign.id).then(message => {
       zodiacMessage.textContent = message;
       zodiacInfo.style.display = 'block';
