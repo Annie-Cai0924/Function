@@ -190,8 +190,13 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }, 10);
   }
-  
-//Learn it from GPT,but wrote it from claude
+ 
+//  style.transform and style.opacity to control animation; 
+//scale() and translateY() are commonly used pop-up action combinations; 
+//querySelector('.modal') is the key to finding the content layer in the popup; 
+//It is important to add an if check before manipulating the DOM to prevent errors;
+//https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector
+//https://css-tricks.com/
 
   function closeModalAnimation(modal) {
     //This means finding the real white box inside the popup (usually the.modal layer)
@@ -591,7 +596,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
 
 
-  
+
   function formatDate(date) {
     return date.toISOString().split('T')[0];
   }
