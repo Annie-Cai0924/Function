@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
   //It's what I use to keep all the basic data on the constellations. Every constellation is an object
 
   //Define the data of 12horoscopes
-  //Name: horoscopes' name (to display)
+  //Name: horoscopes' name to display
   //Id: horoscopes's name
   //element: the four classic element
   //https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
   //This is to get the date input box on the page. 
   //I use it to pick today or a day in the past to record emotions.
   const dateInput = document.getElementById('date');
-  //This is the container for the entire "mood record form" (including mood, date, intensity, and so on). 
+  //This is the container for the entire "mood record form" 
   //It is used when you submit records.
   const emotionForm = document.getElementById('emotion-form');
   //this is used to display the emotional history recorded in the past. It's like a mood diary area where you can see your previous mood records.
@@ -106,8 +106,8 @@ document.addEventListener('DOMContentLoaded', function() {
 //it may be placed somewhere like the bottom bar to make it easier for users to open the emotion popup on their phones.
   const mobileRecordBtn = document.getElementById('mobile-record-btn');
 //This converts the date format to yyyy-mm-dd (because <input type="date"> requires this format). 
-//.toISOString() returns a format like 2025-04-12T14:28:00.000Z, 
-//.split('T')[0] is to take the previous 2025-04-12.
+//.toISOString() returns a format like yyyy-mm-ddT14:28:00.000Z, 
+//.split('T')[0] is to take the previous date.
   const today = new Date();
   const formattedDate = today.toISOString().split('T')[0];
   //this is set the default value of the date input box to today
@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function() {
     closeMenuIfMobile();
     //Start by executing closeMenuIfMobile() above, making sure to close the menu first if it is open
     modal.classList.add('active');
-    //Add the active class within the popup, which will normally opacity the popup in CSS (for example: display: block or opacity: 1)
+    //Add the active class within the popup, which will normally opacity the popup in CSS
     setTimeout(() => {
       if (modal.querySelector('.modal')) {
         modal.querySelector('.modal').style.transform = 'translateY(0) scale(1)';
@@ -196,17 +196,17 @@ document.addEventListener('DOMContentLoaded', function() {
   function closeModalAnimation(modal) {
     //This means finding the real white box inside the popup (usually the.modal layer)
     if (modal.querySelector('.modal')) {
-    //Move down 30px and zoom out a little bit (to 95%)
+    //Move down 30px and zoom out a little bit
       modal.querySelector('.modal').style.transform = 'translateY(30px) scale(0.95)';
     //Let it slowly become transparent
       modal.querySelector('.modal').style.opacity = '0';
     }
     
 
-    //This is written because the popup has been added to the closing animation effect (such as letting it slowly fade, slide, shrink), and these animations need time to play out. 
+    //This is written because the popup has been added to the closing animation effect and these animations need time to play out. 
  
 //So I don't want it to be hidden or removed all at once, so the user can't see the animation.
-    //Wait 300 milliseconds (0.3 seconds) before removing the.active class name from the popup
+    //Wait 300 milliseconds is about0.3 seconds before removing the.active class name from the popup
     setTimeout(() => {
       modal.classList.remove('active');
     }, 300);
@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', function() {
   mobileMenuBtn.addEventListener('click', function(e) {
     //Default behavior to block this click event
     e.preventDefault();
-    //This event stays in this button and does not trigger other click events in the outer container (for example, some pages will click on the blank to close the menu, I don't want to accidentally close the menu by clicking the menu button)
+    //This event stays in this button and does not trigger other click events in the outer container, some pages will click on the blank to close the menu, I don't want to accidentally close the menu by clicking the menu button
     e.stopPropagation();
     //Open the mobile side menu this function was written before, right? true indicates to display menu. It adds.active class names, animates, prevents scrolling, and so on.
     toggleMobileMenu(true);
@@ -232,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function() {
     toggleMobileMenu(false);
   }, true);
   //When the user clicks on the content area of the sidebar, do not let the click event continue to circulate
-  //I added this because sometimes when you click somewhere on the entire page, the page may do some global processing (such as clicking on an empty space to close the menu). 
+  //I added this because sometimes when you click somewhere on the entire page, the page may do some global processing
 //But the user clicks on the sidebar content and doesn't want to miss the "click to close" logic by clicking inside the menu
   sidePanel.addEventListener('click', function(e) {
     e.stopPropagation();
@@ -316,14 +316,14 @@ document.addEventListener('DOMContentLoaded', function() {
   function populateEmotionGrid() {
     //Clear the mood selection area first to make sure you don't re-render or overlay old content
     emotionGrid.innerHTML = '';
-    //Each emotion object in the emotions array (such as Happy, Sad, etc.) is traversed
+    //Each emotion object in the emotions array is traversed
     emotions.forEach(emotion => {
       //Create a new <div> element as a single mood card
       const emotionItem = document.createElement('div');
       //Add the CSS class emotion-item to the card for easy styling
       emotionItem.className = 'emotion-item';
       //.emotion-icon: Displays an emoji icon with the emotion's color as a background 
-//.emotion-name: The name of the emotion (such as "Happy")
+//.emotion-name: The name of the emotion 
       emotionItem.dataset.id = emotion.id;
       emotionItem.innerHTML = `
         <div class="emotion-icon" style="background-color: ${emotion.color}">
@@ -345,7 +345,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  //Dynamically generate and insert the 12 constellations drop-down selection box （web size)
+  //Dynamically generate and insert the 12 constellations drop-down selection box on web size
 //I write the populateZodiacSelect() function so that the user can choose their own constellation. Whether you open a website on your computer or mobile phone, it will automatically generate the corresponding drop-down menu. If it is a phone, it will add a smaller screen version of the menu that is more suitable
 //This code mainly uses the most common DOM operations in JavaScript, such as createElement to create an HTML element and appendChild to add it to the page. This way I saw it on some MDN
 //from createElement、appendChild
@@ -357,7 +357,7 @@ document.addEventListener('DOMContentLoaded', function() {
       option.textContent = sign.name;
       zodiacSelect.appendChild(option);
     });
-    //Check if the current is a small screen (usually a mobile phone), and if so, create a mobile-specific constellation selection box
+    //Check if the current is a small screen, and if so, create a mobile-specific constellation selection box
     if (window.innerWidth <= 375) {
       let zodiacMobileSelect = document.getElementById('zodiac-mobile-select');
       
@@ -411,9 +411,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
+//https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Async_JS/Promises
+  //This part of the code is written with reference to the basic usage of async/await in JavaScript. To simulate the process of getting constellation suggestions, I added a setTimeout Promise to the function, with a delay of about 300 ms, to give the user the feeling that the system is thinking
+  //This function is async, meaning it executes asynchronously and is good for things that take a little while to complete, such as getting data from a database or API
   async function getZodiacMessage(zodiacId) {
+    //The await keyword causes the program to stop here about 0.3s
     await new Promise(resolve => setTimeout(resolve, 300));
-    
+    //Defines an object called messages, which contains a message or suggestion for each constellation. Like a dictionary, key is the English id of the constellation, and value is the text content
     const messages = {
       'aries': 'Today your enthusiasm is like fire, suitable for starting new projects. Remember to pay attention to emotional fluctuations and maintain balance.',
       'taurus': 'Stability is your advantage, but beware of stubbornness. Today is suitable for enjoying simple pleasures.',
@@ -429,18 +433,27 @@ document.addEventListener('DOMContentLoaded', function() {
       'pisces': 'Intuition is particularly accurate today, listen to your inner voice, artistic activities help relieve stress.'
     };
     
+
+    //This sentence is the end of the getZodiacMessage function. It means: if there are messages in the object corresponding to the constellation, return that one; If not, "Loading constellation information..." is displayed. The default prompt. 
+ 
+//I learned in the MDN JavaScript tutorial that the || operator can be used to set the "default value", such as executing the value on the right when undefined is left
     return messages[zodiacId] || 'Loading zodiac information...';
   }
 
+  //This is the function that keeps a record of the user's emotions. It converts the emotionsData into a string and stores it in the browser's localStorage
+  //https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
   function saveEmotions(emotionsData) {
     localStorage.setItem('emotions', JSON.stringify(emotionsData));
   }
 
+  //This function is "read the mood record locally". Check to see if there are any emotions saved locally, and if there are, parse them back into the object (using JSON.parse()); If not, return an empty array. 
+ 
+//This is also the same pair of operations as above. setItem is save, getItem is take. I learned this from practice, like DevTools, when I opened Local Storage on the app's page and saw what I had saved
   function loadEmotionHistory() {
     const saved = localStorage.getItem('emotions');
     return saved ? JSON.parse(saved) : [];
   }
-
+//First take the historical sentiment from the local; If there is no record (the array length is 0), the message "No mood record" is displayed on the page.
   function renderEmotionHistory() {
     const emotionHistory = loadEmotionHistory();
     
@@ -449,23 +462,40 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
     
+    //This sentence groups emotional history by "date." Since we may record emotions several times a day, we need to organize these by day for easy display. 
+ 
+//I learned that arrays can be classified by fields through a groupBy function when I was looking up data. This groupByDate was rewritten by my friend
     const groupedEmotions = groupByDate(emotionHistory);
     
+    //This sentence is "clear the history panel", making sure that we don't overlay the old content every time we render. 
+ 
+//I discovered this when I was actually debugging: if you don't clean it up, duplicate content will appear. So.innerHTML = "" is a little trick to reset the panel
     historyPanel.innerHTML = '';
     
+    //This sentence is "loop each day," groupedEmotions is an object, key is the date, and value is an array of emotions for the entire day. 
+ 
+//I learned this using JavaScript's object.keys () method, which takes the Object's keys and uses them as an array, and then we can.foreach () work with the data forEach day.
     Object.keys(groupedEmotions).forEach(date => {
       const dateHeader = document.createElement('div');
       dateHeader.className = 'date-header';
+      //<i class="fas fa-calendar-day"> is a calendar icon using the Font Awesome icon library
       dateHeader.innerHTML = `<i class="fas fa-calendar-day"></i> ${formatDateHeader(date)}`;
       historyPanel.appendChild(dateHeader);
       
+      //This section is to recycle each emotion recorded that day in "each day", and then find the detailed information of the emotion (such as the emotion name, color, icon) from the emotions list. 
+ 
+//I did this using the JavaScript array's find() method, which means "find the first item in the list that matches the condition."
       groupedEmotions[date].forEach(emotion => {
         const emotionData = emotions.find(e => e.id === emotion.emotion);
         if (!emotionData) return;
         
+        //This is a new <div> element that holds each mood record. Just like the "mood cards" we see on the screen
         const historyItem = document.createElement('div');
+        //Give it the style class name 'history-item' so that our CSS can control the style of these cards, such as border, background, rounded corners, and so on
         historyItem.className = 'history-item';
+        //This sentence is to store the unique ID of each emotion in the data-id of this element, which is convenient to delete later
         historyItem.dataset.id = emotion.id;
+        //Small circle, the background color is the emotion color chosen by the user, and the emoji icon is in the middle
         historyItem.innerHTML = `
           <div class="history-item-content">
             <div class="emotion-color" style="background-color: ${emotionData.color}">${emotionData.icon}</div>
@@ -479,49 +509,76 @@ document.addEventListener('DOMContentLoaded', function() {
             <i class="fas fa-times"></i>
           </button>
         `;
-        
+       //Finally, add that mood card to the history panel. This step is to make it actually appear on the page 
         historyPanel.appendChild(historyItem);
       });
     });
-    
+
+    //This is to select the button with the delete-btn class name on all pages, because each mood record has a delete button, and then use forEach to process each button
     document.querySelectorAll('.delete-btn').forEach(btn => {
+      //Add click event listeners to each button
       btn.addEventListener('click', function(e) {
         e.stopPropagation();
+        //This line of code gets the unique ID of the mood record from the data-id attribute of the button, so that you know which one to delete later
         const id = this.dataset.id;
+        //A confirmation box is displayed
         if (confirm('Are you sure you want to delete this emotion record?')) {
+          //If the user clicks yes, we actually do the deletion
           deleteEmotion(id);
         }
       });
     });
   }
 
+  //This function is used to group mood data by date
+  //So this is going to define a function called groupByDate, and it's going to pass in emotions, which is a bunch of recorded emotion data
   function groupByDate(emotions) {
+    //here is used by JavaScript's reduce()  to "compress" the emotions array into a new object group. This function is executed once for each walk to assign emotion to the corresponding date group
     return emotions.reduce((groups, emotion) => {
+      //Each emotion record has a timestamp, which we convert into a JavaScript time object with new Date() and formatDate() into a format like "yyyy/mm/dd". So we can sort them by day
       const date = formatDate(new Date(emotion.timestamp));
+      //Drop the current emotion data into the array corresponding to the date
       if (!groups[date]) {
         groups[date] = [];
       }
+      //reduce stores all the grouped content in the groups object and returns it. Initial value is empty object {}
       groups[date].push(emotion);
       return groups;
     }, {});
   }
   
+  //Convert the date string to a more human title
   function formatDateHeader(dateStr) {
+    //This is to define a function called formatDateHeader, which takes a date in string format as an argument
     const date = new Date(dateStr);
+    //Turn this string into a JavaScript Date object so you can compare it to other times later
+    //Create a Date object representing Today to synchronize with the system time
+
+    //yesterday's date is today-1
     const today = new Date();
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
     
+//If the date string is equal to today's date, that means the record is from today
     if (dateStr === formatDate(today)) {
       return 'Today';
+      //If not today, then determine if it was yesterday
     } else if (dateStr === formatDate(yesterday)) {
       return 'Yesterday';
     } else {
+    //  If it is neither today nor yesterday, return the original date string
       return dateStr;
     }
   }
   
+  //learn fromhttps://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
+  //This is a function called formatTime, which means "formatting time." 
+//It receives a parameter called timestamp, which is a timestamp.
+
+
+//but it didt work????
   function formatTime(timestamp) {
+    //Turn the timestamp into a JavaScript Date object so we can use it to get the hours and minutes
     const date = new Date(timestamp);
     const hours = date.getHours().toString().padStart(2, '0');
     const minutes = date.getMinutes().toString().padStart(2, '0');
