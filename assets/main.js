@@ -595,77 +595,117 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
 
-
-
+//This function only keeps the year, month and day in the format "YYYY-MM-DD"
+//https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
   function formatDate(date) {
     return date.toISOString().split('T')[0];
   }
-  
+  //It is triggered when the user clicks the "record mood" button (Record demotionbtn) 
+////closeMenuIfMobile() : If it is mobile view, close the left or top menu to avoid blocking pop-ups; 
+//openModal(emotionModal) : Opens a popup window to record emotions.
   recordEmotionBtn.addEventListener('click', function() {
     closeMenuIfMobile();
     openModal(emotionModal);
   });
   
+
+  //When the user clicks the "Close popup" button, an action is performed
+  //Adds a closed animation effect to the current emotionModal
+  //https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
   closeModal.addEventListener('click', function() {
     closeModalAnimation(emotionModal);
   });
   
+  //Add a click event to the entire emotionModal
+  //https://developer.mozilla.org/en-US/docs/Web/API/Event/target
+  //https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
   emotionModal.addEventListener('click', function(e) {
     if (e.target === emotionModal) {
       closeModalAnimation(emotionModal);
     }
   });
   
+  //This code binds a submit event to the "mood form"
+  //This function is executed when you click the "Submit" button
+  //https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault
   emotionForm.addEventListener('submit', function(e) {
+    //In general, the form is raised to refresh the entire page, and we don't want to do that, so "block" it by default
     e.preventDefault();
-    
+    //Find the sentiment selected by the user from the page
     const selectedEmotion = document.querySelector('.emotion-item.selected');
+    //What if the user doesn't choose anything
     if (!selectedEmotion) {
       showToast('Please select an emotion', 'error');
       return;
     }
     
+    // //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime
+    //This code is "to package the user's emotional record into an object" ready to be saved
+    //This sentence is to get the ID of the emotion selected by the user
     const emotionId = selectedEmotion.dataset.id;
+    //The user also selects an "intensity value"
     const intensity = parseInt(intensityInput.value);
+    //The user can specify the date of the record，Let them record what they didn't record in the previous day and make up for it
     const date = dateInput.value;
+    //In order to facilitate subsequent sorting and storage, we convert the date into a "timestamp"
     const timestamp = new Date(date).getTime();
-    
+    //Save it in history
     const emotion = {
       id: Date.now().toString(),
       emotion: emotionId,
       intensity: intensity,
       timestamp: timestamp
     };
-    
+    //Finally, the emotion will be added to the history array and stored in localStorage so that it can be seen the next time you open the web page
+    //https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset
+    //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt
+   
+
+    //https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
+    //read out the mood records saved in the local localStorage and catch them with a number group
     const emotionHistory = loadEmotionHistory();
+    //Add the newly created emotion object to the end of the array. 
+    //Add today's record to the history list
     emotionHistory.push(emotion);
+    //Save the updated sentiment array back to localStorage
     saveEmotions(emotionHistory);
-    
+    //Re-render the latest list of mood notes
     renderEmotionHistory();
+    //Update star chart
     initializeStarMap();
-    
+    //A notification pops upMood record saved success
     showToast('Emotion record saved', 'success');
-    
+    //Uncheck the "Selected status" of all mood ICONS
     document.querySelectorAll('.emotion-item').forEach(item => {
       item.classList.remove('selected');
     });
+    //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push
+    //Reset the strength value to 5 for the user's next use
     intensityInput.value = 5;
     intensityValue.textContent = 5;
-    
+    //Close the "Mood selection window" that pops up
     closeModalAnimation(emotionModal);
   });
 
+
+  //An asynchronous function that can await the completion of an asynchronous operation, such as loading an external JSON file
   async function loadZodiacData() {
     try {
+      //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/try...catch
+      //https://developer.mozilla.org/en-US/docs/Web/API/Window/fetch
+      //fetch() is a browser-built API for sending network requests
+      //Here it tries to get the number associated with the constellation from the local directory assets/data.json
       const response = await fetch('assets/data.json');
+      //Convert the text from data.json to a JS object
       if (!response.ok) throw new Error('Failed to load zodiac data');
       const data = await response.json();
-      
+      //Call your own function populateZodiacSelects() to render the constellation information into a drop-down menu on the page
       populateZodiacSelects(data.zodiacSigns);
-      
+      //Save the suggestions corresponding to each constellation in the dailyAdviceData object for quick follow-up lookup
       data.zodiacSigns.forEach(sign => {
         dailyAdviceData[sign.sign.toLowerCase()] = sign.advice;
       });
+      
       
       if (userZodiac) {
         zodiacSelect.value = userZodiac;
