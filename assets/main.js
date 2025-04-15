@@ -580,10 +580,17 @@ document.addEventListener('DOMContentLoaded', function() {
   function formatTime(timestamp) {
     //Turn the timestamp into a JavaScript Date object so we can use it to get the hours and minutes
     const date = new Date(timestamp);
+    //Take out "hours" with getHours(), 
+//Turn it into a string, then use.padstart (2, '0') to make sure it's a two-digit number.
     const hours = date.getHours().toString().padStart(2, '0');
+    //This sentence is to take "minutes", also make up zero, and ensure that it is also double digits
     const minutes = date.getMinutes().toString().padStart(2, '0');
+    //Make a string of hours and minutes
     return `${hours}:${minutes}`;
   }
+  
+
+
   
   function formatDate(date) {
     return date.toISOString().split('T')[0];
