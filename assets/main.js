@@ -706,12 +706,17 @@ document.addEventListener('DOMContentLoaded', function() {
         dailyAdviceData[sign.sign.toLowerCase()] = sign.advice;
       });
       
-      
+      //userZodiac is the zodiac identifier that the user has previously selected and saved
+      //https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
       if (userZodiac) {
         zodiacSelect.value = userZodiac;
         updateZodiacInfo(userZodiac);
         initialZodiacModal.classList.remove('active');
       }
+      //This catch block is executed if the above logic fails during execution: 
+//• console.error(...) : Output error messages in the developer console for easy debugging 
+//• showToast(...) Call your custom prompt function to notify the user "failed to load constellation information, please refresh the page and try again"
+//learn from https://developer.mozilla.org/en-US/docs/Web/API/console/error_static
     } catch (error) {
       console.error('Error loading zodiac data:', error);
       showToast('Unable to load zodiac data, please refresh the page and try again', 'error');
@@ -719,12 +724,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   function populateZodiacSelects(signs) {
+    //It will process the array of constellations you pass in one by one
     signs.forEach(sign => {
+      //Add to the first menu
       const option1 = document.createElement('option');
       option1.value = sign.sign.toLowerCase();
       option1.textContent = sign.sign;
       zodiacSelect.appendChild(option1);
-      
+      //Add it to another menu
       const option2 = document.createElement('option');
       option2.value = sign.sign.toLowerCase();
       option2.textContent = sign.sign;
@@ -733,53 +740,71 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   function updateZodiacInfo(zodiacId) {
+    //I used it to read the local JSON file that contains all the data for the 12 constellations
+    //https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
     fetch('assets/data.json')
       .then(response => response.json())
       .then(data => {
+        //I use array.prototype.find () to find constellation objects from the Array of zodiacSigns that match the user's selection
         const sign = data.zodiacSigns.find(s => s.sign.toLowerCase() === zodiacId);
         if (!sign) return;
-        
+        //I modify the DOM elements in the page through textContent, such as zodiacTitle.textContent = sign.sign
         zodiacTitle.textContent = sign.sign;
         zodiacPeriod.textContent = sign.period;
         zodiacElement.textContent = sign.element;
-        
+        //To get the user's current recorded mood
+        //This is the "key input" to the entire personalized suggestion. Decide what recommendation to display next
         const currentEmotion = getCurrentEmotion();
+        //From the suggestion library of the current horoscope, pull out the suggestion that matches the user's mood
+        //Some emotions may not have suggestions written in the JSON file, so I use "or" to set a default value to avoid page errors
         const advice = sign.advice[currentEmotion] || sign.advice["Happy"];
         
         const today = new Date();
+        //Change the date format to something more user-friendly
+        //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleDateString
+        // I can use this method to automatically convert dates into different languages and styles, which is very flexible
         const dateStr = today.toLocaleDateString('en-US', { 
           year: 'numeric', 
           month: 'long', 
           day: 'numeric',
           weekday: 'long'
         });
-        
+        //The date and constellation suggestions are displayed at the same time, and the date can be bolded and wrapped by HTML tags
+        //what I learn is When you need to insert HTML content (such as <strong>, <br>) on a page, you need to use innerHTML, not textContent
         zodiacMessage.innerHTML = `<strong>${dateStr}</strong><br><br>${advice}`;
       })
+      //Add a "backup plan if something goes wrong." If an error occurs during loading JSON or processing, an error is printed and a user prompt is displayed
+      //ChatGPT and my friend warned and remind me about adding.catch() to the fetch chain, and I've seen a lot of projects on the Internet that write that
+      //Whether it's a fetch network issue or a code bug, it can lead to failure, plus this part ensures that users don't see a blank in a confused way
       .catch(error => {
         console.error('Error updating zodiac info:', error);
         zodiacMessage.textContent = 'Unable to get zodiac advice';
       });
   }
   
+  //To analyze sentiment trends, one must first have historical data
   function getCurrentEmotion() {
     const emotionHistory = loadEmotionHistory();
+    //This is a safeguard against page crashes
     if (emotionHistory.length === 0) return "Happy";
-    
+    //Format today's date as YYYY-MM-DD so you can compare it with your mood notes later
     const today = new Date().toISOString().split('T')[0];
+    //The next step is to find the most frequent emotions today, so first "filter" the data.
     const todayEmotions = emotionHistory.filter(e => e.date === today);
-    
+    //Although not recorded today, but I still want to give users a suggestion, so take the last one for reference
     if (todayEmotions.length === 0) {
+      //Get the user's last recorded mood
       const lastEmotion = emotionHistory[emotionHistory.length - 1];
       const emotionObj = emotions.find(e => e.id === lastEmotion.emotion);
       return mapEmotionToEnglish(emotionObj?.name || "Happy");
     }
-    
+    //Count how many times each emotion is present today and put it in an object
+    //This is a classic "mood counter", and many JS tutorials have similar examples
     const counts = {};
     todayEmotions.forEach(e => {
       counts[e.emotion] = (counts[e.emotion] || 0) + 1;
     });
-    
+    //Find the most tallied emotion
     let maxCount = 0;
     let mainEmotion = null;
     for (const [emotion, count] of Object.entries(counts)) {
@@ -788,11 +813,13 @@ document.addEventListener('DOMContentLoaded', function() {
         mainEmotion = emotion;
       }
     }
-    
+    //The main emotion is translated into English and then returned
     const emotionObj = emotions.find(e => e.id === mainEmotion);
     return mapEmotionToEnglish(emotionObj?.name || "Happy");
   }
   
+  //Create an emotion mapping, since the JSON file of the constellation suggestion only supports a few main emotions 
+  //This is a common "label mapping" or "categorization" notation. I learned from ChatGPT and Q&A sites that this practice is common in natural language processing and sentiment analysis
   function mapEmotionToEnglish(englishEmotion) {
     const mapping = {
       'Happy': 'Happy',
@@ -805,27 +832,43 @@ document.addEventListener('DOMContentLoaded', function() {
       'Grateful': 'Happy'
     };
     
+    //This function is like a translator, which will "translate" the various emotion words we set ourselves into the core emotions supported by the constellation JSON data. This way, the updateZodiacInfo() written earlier gets the advice correctly with sign.advice[currentEmotion]
+    //Return the result of the mapping, or default if the incoming word is not in the mapping table
     return mapping[englishEmotion] || 'Happy';
   }
 
+  //learn it from gpt and Stack Overflow drag zoom example
+  //initializeStarMap() is designed to render an "emotional star map" on the canvas, visualizing the user's emotional history, like a starry sky interface that can be dragged and zoomed
   function initializeStarMap() {
+    //Read the user's saved mood data, used to generate star position, intensity
+    //This is the standard data-driven rendering step, read the data first, then do the rendering
     const emotionHistory = loadEmotionHistory();
+    //Gets a 2D rendering context for drawing on the canvas
+    //All canvas drawing operations need to use ctx (context) to call the API, such as ctx.arc(), ctx.moveto ()
+    //getContext('2d') is getting the brush.
     const ctx = starCanvas.getContext('2d');
-    
+    //Initializes the main mood star of the storage user; The lines that connect the stars; And randomly decorate the background stars.
+    //Separation logic. User stars and background stars are different kinds, separate for better control
     let stars = [];
     let constellationLines = [];
     let backgroundStars = [];
+    //Store the ID of the animation frame for a possible later animation loop requestAnimationFrame() or cancelAnimationFrame()
     let animationFrame;
-    
-    // 添加拖动功能变量
+    //Implement the drag view function
+    //Determine whether you are dragging
     let isDragging = false;
+    //Drag the starting mouse position
     let dragStart = { x: 0, y: 0 };
+    //The offset of the current view
     let viewOffset = { x: 0, y: 0 };
+    //The last offset is used to calculate the relative change
     let lastViewOffset = { x: 0, y: 0 };
+    //Control the fractal scaling ratio
+    //Prevent users from shrinking the map too small or making it too large to maintain a good experience
     let minScale = 0.5;
     let maxScale = 2.0;
     let currentScale = 1.0;
-    
+    //Adaptive canvas size, set canvas size based on the width and height of the container
     const resizeCanvas = () => {
       const container = starCanvas.parentElement;
       starCanvas.width = container.offsetWidth;
@@ -834,11 +877,12 @@ document.addEventListener('DOMContentLoaded', function() {
       createStars();
       createBackgroundStars();
     };
-    
+    //resizeCanvas() is automatically called when the browser window size changes to keep the star map size fit
     window.addEventListener('resize', resizeCanvas);
+    //Once the page is initialized, resizeCanvas() is run immediately to correctly size the canvas and generate stars
     resizeCanvas();
     
-    // 添加触摸和鼠标事件监听器
+//setupDragListeners() is used to add mouse and touch event listeners to the canvas, and users can drag the star map to see different areas
     function setupDragListeners() {
       // 鼠标事件
       starCanvas.addEventListener('mousedown', startDrag);
